@@ -27,7 +27,7 @@
 <header class="top">
   <div class="wrap">
     <a class="brand" href="../"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#13233A"/><g stroke="#F5F7F9" stroke-width="1.6" stroke-linecap="round"><path d="M16 17 8 9M16 17l9-5M16 17l-3 9M16 17l8 7"/></g><g fill="#F5F7F9"><circle cx="8" cy="9" r="2.3"/><circle cx="25" cy="12" r="2.3"/><circle cx="13" cy="26" r="2.3"/><circle cx="24" cy="24" r="2.3"/></g><circle cx="16" cy="17" r="4" fill="#FF7A33"/></svg>Ryan Allen</a>
-    <nav aria-label="Main"><ul><li class=""><a href="../#projects">Projects</a></li><li class="opt"><a href="../#germany">Germany</a></li><li class="opt"><a href="../#experience">Experience</a></li><li class=""><a href="../assets/Ryan_Allen_Resume.pdf">Résumé</a></li></ul></nav>
+    <nav aria-label="Main"><ul><li class=""><a href="../#projects">Projects</a></li><li class="opt"><a href="../#experience">Experience</a></li><li class="opt"><a href="../#germany">Germany</a></li><li class=""><a href="#contact">Contact</a></li><li class=""><a href="../assets/Ryan_Allen_Resume.pdf">Résumé</a></li></ul></nav>
   </div>
 </header>
 <main id="main">
@@ -40,11 +40,11 @@
 <div class="wrap case">
   <nav class="toc" aria-label="On this page"><h2>On this page</h2><ol><li><a href="#summary">Project summary and skills</a></li><li><a href="#process">Development process</a></li><li><a href="#features">Key features</a></li><li><a href="#part">My part</a></li></ol></nav>
   <div class="prose"><section id="summary" aria-labelledby="summary-h"><h2 id="summary-h">Project summary and skills</h2>
-<p class="callout">Built with <a href="https://damirs-stupendous-site-b66f69.webflow.io/">Damir Ashinov</a> and Sam Brown. Their names link to their own ePortfolios.</p>
+<p class="callout">Built with <a href="https://damirs-stupendous-site-b66f69.webflow.io/">Damir Ashinov</a> and <a href="https://sambrown1244.github.io/">Sam Brown</a>. Their names link to their own ePortfolios.</p>
 <p>Parking is the most common complaint on the University of Arkansas campus. The university sold 21,124 annual car permits in fiscal 2025 for 14,632 spaces, about 1.44 permits for every space. A permit tells you where you're allowed to park, not where you should. HillPark answers the second question for one person's week.</p>
 <p>You enter your permit and your classes. For each class day, HillPark ranks the lots and garages your permit allows by walking time, driving time and traffic, estimates how full each lot will be when you arrive, and checks whether parking at the Economy lot and taking the bus would be faster. The <em>Your week</em> tab then picks the best one to three lots for the whole week.</p>
-<figure class="fig"><div class="frame"><img src="../assets/img/hillpark-plan.webp" alt="HillPark showing a plan for an example week: a tab per class day, a campus map with the walking route from the best lot, and ranked lot cards." width="1360" height="900" loading="lazy" decoding="async"></div>
-<figcaption>A plan for an example week: a tab per class day, the walking route from the best lot, and the ranked lots.</figcaption></figure>
+<figure class="fig"><div class="frame"><a class="zoom" href="../assets/img/hillpark-plan.webp" data-w="1360" data-h="900" aria-label="Enlarge: HillPark showing a plan for an example week: a tab per class day, a campus map with the walking route from the best lot, and ranked lot cards."><img src="../assets/img/hillpark-plan.webp" alt="HillPark showing a plan for an example week: a tab per class day, a campus map with the walking route from the best lot, and ranked lot cards." width="1360" height="900" loading="lazy" decoding="async"></a></div>
+<figcaption>A plan for an example week: a tab per class day, the walking route from the best lot, and the ranked lots. Select any screenshot to enlarge it.</figcaption></figure>
 <h3>The data</h3>
 <ul>
 <li>110 parking lots and garages with their outlines and permit rules, and 217 campus buildings, from the university's interactive campus map</li>
@@ -76,7 +76,7 @@
 <p><strong>What it does:</strong> you choose how many different lots you're willing to use, from one to three, and OR-Tools picks the lots and which days go to each so the week's total score is as low as possible.</p>
 <div class="model" role="group" aria-label="The week-plan integer program">
 <div class="row"><span class="k">Sets</span><span class="e"><var>D</var> = class days, <var>L</var> = lots your permit allows</span><span class="c"></span></div>
-<div class="row"><span class="k">Data</span><span class="e"><var>c<sub>dl</sub></var> = score of lot <var>l</var> on day <var>d</var></span><span class="c">walking, driving and traffic minutes</span></div>
+<div class="row"><span class="k">Data</span><span class="e"><var>c<sub>dl</sub></var> = score of lot <var>l</var> on day <var>d</var></span><span class="c">in minutes: walking, traffic delay, driving if you say where you're coming from, and a penalty for lots likely to be full</span></div>
 <div class="row"><span class="k">Variables</span><span class="e"><var>x<sub>dl</sub></var> ∈ {0, 1}, &nbsp;<var>y<sub>l</sub></var> ∈ {0, 1}</span><span class="c">park in lot <var>l</var> on day <var>d</var>; lot <var>l</var> is one of your lots</span></div>
 <div class="row"><span class="k">Minimize</span><span class="e">Σ<sub><var>d</var></sub> Σ<sub><var>l</var></sub> <var>c<sub>dl</sub></var> <var>x<sub>dl</sub></var></span><span class="c">total score for the week</span></div>
 <div class="row"><span class="k">Subject to</span><span class="e">Σ<sub><var>l</var></sub> <var>x<sub>dl</sub></var> = 1 &nbsp;for every day <var>d</var></span><span class="c">park somewhere every class day</span></div>
@@ -101,8 +101,8 @@ for (int d = 0; d &lt; days; d++) {
 MPConstraint atMostK = solver.makeConstraint(0, maxLots, "at_most_k_lots");
 for (int l = 0; l &lt; lots; l++) atMostK.setCoefficient(y[l], 1);
 objective.setMinimization();</code></pre>
-<p><strong>Why it matters:</strong> a person can easily find the best lot for one day, but not the best split across a week. In the example week, one lot all week (Lot 209) scores 178. Two lots (Lot 446 on Monday, Wednesday and Friday, Lot 204 on Tuesday and Thursday) score 149, 16% better. With at most 7 × 110 binary variables, SCIP solves it in milliseconds, and the tests check its answer against brute force on 25 random weeks.</p>
-<figure class="fig" style="max-width:440px"><div class="frame"><img src="../assets/img/hillpark-week.webp" alt="The Your week tab: two lots chosen, Lot 446 for Monday, Wednesday and Friday and Lot 204 for Tuesday and Thursday, with a week total 16% lower than using one lot." width="860" height="1315" loading="lazy" decoding="async"></div>
+<p><strong>Why it matters:</strong> a person can easily find the best lot for one day, but not the best split across a week. In the example week, one lot all week (Lot 209) scores 178 minutes. Two lots (Lot 446 on Monday, Wednesday and Friday, Lot 204 on Tuesday and Thursday) score 149 minutes, 16% less. The example uses the default settings, so its score is walking time plus traffic delay, with a few penalty minutes for lots likely to be full. With at most 7 × 110 binary variables, SCIP solves it in milliseconds, and the tests check its answer against brute force on 25 random weeks.</p>
+<figure class="fig" style="max-width:440px"><div class="frame"><a class="zoom" href="../assets/img/hillpark-week.webp" data-w="860" data-h="1315" aria-label="Enlarge: The Your week tab: two lots chosen, Lot 446 for Monday, Wednesday and Friday and Lot 204 for Tuesday and Thursday, with a week total 16% lower than using one lot."><img src="../assets/img/hillpark-week.webp" alt="The Your week tab: two lots chosen, Lot 446 for Monday, Wednesday and Friday and Lot 204 for Tuesday and Thursday, with a week total 16% lower than using one lot." width="860" height="1315" loading="lazy" decoding="async"></a></div>
 <figcaption>The <em>Your week</em> tab with a limit of two lots.</figcaption></figure>
 
 <h3>A traffic forecast trained with Smile</h3>
@@ -119,8 +119,8 @@ objective.setMinimization();</code></pre>
 <h3>Park and ride from real bus times</h3>
 <p><strong>What it does:</strong> finds the latest bus from Lot 500 that still gets you to your first class on time, the first one back after your last class, and compares the trip with driving to your best lot. Walking routes come from Dijkstra's algorithm on about 13,800 street and footpath nodes.</p>
 <div class="pair">
-<figure class="fig" style="margin:0"><div class="frame"><img src="../assets/img/hillpark-ride-map.webp" alt="Map of a park-and-ride trip: Lot 500, the Route 500 Express along Razorback Road, and the walk to class." width="1360" height="900" loading="lazy" decoding="async"></div></figure>
-<figure class="fig" style="margin:0"><div class="frame"><img src="../assets/img/hillpark-ride-card.webp" alt="The park-and-ride card: be parked at Lot 500 by 9:09 am, 20 minutes on the bus, with each step of the trip." width="860" height="399" loading="lazy" decoding="async"></div></figure>
+<figure class="fig" style="margin:0"><div class="frame"><a class="zoom" href="../assets/img/hillpark-ride-map.webp" data-w="1360" data-h="900" aria-label="Enlarge: Map of a park-and-ride trip: Lot 500, the Route 500 Express along Razorback Road, and the walk to class."><img src="../assets/img/hillpark-ride-map.webp" alt="Map of a park-and-ride trip: Lot 500, the Route 500 Express along Razorback Road, and the walk to class." width="1360" height="900" loading="lazy" decoding="async"></a></div></figure>
+<figure class="fig" style="margin:0"><div class="frame"><a class="zoom" href="../assets/img/hillpark-ride-card.webp" data-w="860" data-h="399" aria-label="Enlarge: The park-and-ride card: be parked at Lot 500 by 9:09 am, 20 minutes on the bus, with each step of the trip."><img src="../assets/img/hillpark-ride-card.webp" alt="The park-and-ride card: be parked at Lot 500 by 9:09 am, 20 minutes on the bus, with each step of the trip." width="860" height="399" loading="lazy" decoding="async"></a></div></figure>
 </div>
 <p style="margin-top:14px"><strong>Why it matters:</strong> every permit can park at Lot 500, so for many students the bus is the real alternative to circling a full lot. For a 9:40 am class at the J.B. Hunt building, HillPark says to be parked by 9:09 and take the 9:12 Route 500 Express.</p></section><section id="part" aria-labelledby="part-h"><h2 id="part-h">My part</h2>
 <p>I set up our shared repository and built the first working version on October 12 and 13, working with Claude, an AI assistant. I decided what the app should do, asked for each feature, tested it in the browser and pushed the changes. Building the traffic forecast in Smile and the week plan in OR-Tools was my call, so the app would use the tools from our course. The lot and traffic data comes from the parking project Damir and I built together.</p>

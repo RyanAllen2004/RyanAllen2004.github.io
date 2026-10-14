@@ -345,3 +345,61 @@ pre.code code { background: none; padding: 0; font-size: 0.82rem; white-space: p
 @media (min-width: 1200px) {
   .prose pre.code, .prose .model { width: calc(100% + 220px); }
 }
+
+/* ---- 2026-10-14 review changes ---- */
+/* Label above the name, optional headshot */
+.eyebrow { font-family: var(--display); font-weight: 600; font-size: 1.08rem; letter-spacing: 0.02em; color: var(--signal-text); margin: 0 0 14px; }
+.eyebrow span { white-space: nowrap; }
+.eyebrow i { font-style: normal; color: var(--ink-3); margin-left: 6px; }
+.headshot { width: 112px; height: 112px; object-fit: cover; border-radius: 6px; border: 1px solid var(--rule); margin-bottom: 22px; }
+
+/* Map key under the hero map */
+.solver-key { margin: 10px 0 0; font-size: 0.95rem; gap: 4px 16px; }
+.solver-key .sw { background: var(--lot-cand); }
+.solver-key .sw.dot { background: var(--ink); border-radius: 50%; width: 9px; height: 9px; vertical-align: 0; }
+.solver-key .sw.open { background: var(--signal); border-radius: 50%; }
+.solver-key .sw.walk { background: var(--signal); width: 16px; height: 2px; border-radius: 1px; vertical-align: 4px; }
+
+/* Sub-headings inside a section (Course assignments, Other work) */
+.subhead { font-size: 1.25rem; color: var(--ink-2); margin: 36px 0 20px; padding-top: 28px; border-top: 1px solid var(--rule); }
+
+/* Smaller project cards for course assignments */
+.work-small { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px clamp(24px, 4vw, 48px); }
+.work-small > li { display: grid; grid-template-columns: 168px minmax(0, 1fr); gap: 4px 20px; align-content: start; }
+.work-small .thumb { grid-row: 1 / span 5; display: block; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; aspect-ratio: 16 / 10; align-self: start; }
+.work-small .thumb svg { width: 100%; height: 100%; }
+.work-small h4 { font-size: 1.3rem; margin-bottom: 4px; }
+.work-small h4 a { text-decoration: none; }
+.work-small h4 a:hover { text-decoration: underline; text-decoration-color: var(--signal); }
+.work-small .meta { font-size: 0.98rem; margin-bottom: 8px; }
+.work-small p { font-size: 1.02rem; }
+@media (max-width: 1060px) { .work-small { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 560px) {
+  .work-small > li { grid-template-columns: minmax(0, 1fr); }
+  .work-small .thumb { display: none; }
+}
+
+/* One-line jobs */
+.jobs.brief > li { padding: 14px 0; align-items: baseline; }
+.jobs.brief > li:first-child { padding-top: 0; border-top: 0; }
+.jobs.brief h4 { font-size: 1.15rem; }
+.jobs.brief > li > p { margin: 0; }
+.jobs.brief .org .when { color: var(--ink-3); white-space: nowrap; }
+
+/* Click to enlarge */
+a.zoom { display: block; position: relative; cursor: zoom-in; }
+a.zoom::after {
+  content: ""; position: absolute; right: 8px; bottom: 8px; width: 30px; height: 30px; border-radius: 4px;
+  background: rgba(19, 35, 58, 0.82) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7'/%3E%3C/svg%3E") center / 16px no-repeat;
+  opacity: 0.9; transition: opacity 0.15s;
+}
+a.zoom:hover::after, a.zoom:focus-visible::after { opacity: 1; background-color: var(--signal); }
+dialog.viewer { padding: 0; border: 0; background: transparent; max-width: 96vw; max-height: 96vh; overflow: visible; }
+dialog.viewer::backdrop { background: rgba(8, 14, 24, 0.86); }
+dialog.viewer img { display: block; width: auto; height: auto; max-width: 96vw; max-height: 86vh; border-radius: 6px; background: #fff; }
+dialog.viewer p { color: #E7ECF2; font-family: var(--display); font-size: 1rem; margin: 10px 2px 0; max-width: 80ch; }
+dialog.viewer .close {
+  position: absolute; top: -14px; right: -14px; width: 40px; height: 40px; border-radius: 50%; border: 0; cursor: pointer;
+  background: #fff; color: #13233A; font: 600 22px/40px var(--display); text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+@media (max-width: 640px) { dialog.viewer .close { top: 6px; right: 6px; } }

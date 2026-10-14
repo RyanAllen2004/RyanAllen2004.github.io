@@ -60,6 +60,29 @@
     Object.keys(byId).forEach(function (id) { var s = document.getElementById(id); if (s) io.observe(s); });
   }
 
+  // ---------- Click to enlarge screenshots (links still work without JavaScript) ----------
+  var viewer = null;
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest("a.zoom");
+    if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+    if (typeof HTMLDialogElement !== "function") return;
+    e.preventDefault();
+    if (!viewer) {
+      viewer = document.createElement("dialog");
+      viewer.className = "viewer";
+      viewer.setAttribute("aria-label", "Enlarged screenshot");
+      viewer.innerHTML = '<button type="button" class="close" aria-label="Close">×</button><img alt=""><p></p>';
+      viewer.addEventListener("click", function (ev) { if (ev.target === viewer || ev.target.classList.contains("close")) viewer.close(); });
+      document.body.appendChild(viewer);
+    }
+    var src = a.querySelector("img");
+    var big = viewer.querySelector("img");
+    big.src = a.getAttribute("href");
+    big.alt = src ? src.alt : "";
+    viewer.querySelector("p").textContent = src ? src.alt : "";
+    viewer.showModal();
+  });
+
   var NS = "http://www.w3.org/2000/svg";
   function el(name, attrs, parent) {
     var n = document.createElementNS(NS, name);
