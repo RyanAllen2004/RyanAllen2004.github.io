@@ -34,38 +34,6 @@
   --max: 1180px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:where(:not([data-theme="light"])) {
-    color-scheme: dark;
-    --paper: #0F1B2B;
-    --surface: #142338;
-    --ink: #E7ECF2;
-    --ink-2: #AEB9C6;
-    --ink-3: #93A0B0;
-    --rule: #26384F;
-    --rule-soft: #1C2D43;
-    --signal: #FF7A33;
-    --signal-text: #FF8A4C;
-    --focus: #6EA8FF;
-    --map-bg: #12223A;
-    --map-bld: #1C2E46;
-    --map-road: #22364F;
-    --map-road-major: #2E4561;
-    --map-green: #14302C;
-    --lot: #2E4560;
-    --lot-cand: #4C6786;
-    --series-1: #3987e5;
-    --series-3: #199e70;
-    --neutral-mark: #4A5D74;
-  }
-}
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --paper: #0F1B2B; --surface: #142338; --ink: #E7ECF2; --ink-2: #AEB9C6; --ink-3: #93A0B0;
-  --rule: #26384F; --rule-soft: #1C2D43; --signal: #FF7A33; --signal-text: #FF8A4C; --focus: #6EA8FF;
-  --map-bg: #12223A; --map-bld: #1C2E46; --map-road: #22364F; --map-road-major: #2E4561; --map-green: #14302C;
-  --lot: #2E4560; --lot-cand: #4C6786; --series-1: #3987e5; --series-3: #199e70; --neutral-mark: #4A5D74;
-}
 
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-padding-top: 80px; }
@@ -404,3 +372,12 @@ dialog.viewer .close {
   background: #fff; color: #13233A; font: 600 22px/40px var(--display); text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 @media (max-width: 640px) { dialog.viewer .close { top: 6px; right: 6px; } }
+
+/* ---- Option A (Ryan, 10/14): light only, map question above the map, four skill columns ---- */
+.solver-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; margin-bottom: 12px; }
+.solver-title { font-size: clamp(1.5rem, 2.2vw, 1.7rem); line-height: 1.15; }
+.solver-tag { font-family: var(--display); font-size: 0.95rem; color: var(--ink-2); margin: 0; }
+.solver .solver-key { margin-top: 10px; }
+.skills { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 1000px) { .skills { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .skills { grid-template-columns: minmax(0, 1fr); } }

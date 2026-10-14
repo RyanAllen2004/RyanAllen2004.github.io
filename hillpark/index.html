@@ -14,8 +14,7 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#F5F7F9" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0F1B2B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F5F7F9">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,7 +31,7 @@
 </header>
 <main id="main">
 <div class="case-head"><div class="wrap">
-  <a class="back" href="../#projects">All projects</a>
+  <a class="back" href="../#projects"><span aria-hidden="true">←</span> All projects</a>
   <h1>HillPark</h1>
   <p class="standfirst">A web app that tells University of Arkansas students where to park for their class schedule, and plans the whole week with an integer program.</p>
   <dl class="titleblock"><div class="w4"><dt>Course</dt><dd>INEG 22203 Computing Methods for Industrial Engineers II, Brandon Crisel</dd></div><div class="w2"><dt>Term</dt><dd>Fall 2026</dd></div><div class="w3"><dt>Team</dt><dd>Ryan Allen, Damir Ashinov, Sam Brown</dd></div><div class="w3"><dt>Status</dt><dd>Working version; final interface due December 6</dd></div><div class="w4"><dt>Tools</dt><dd>Java 21, Vaadin 24, Spring Boot, Google OR-Tools, Smile, Tablesaw</dd></div><div class="w2"><dt>Code</dt><dd><a href="https://github.com/RyanAllen2004/Hill-Park-Computing-App">GitHub repository</a></dd></div></dl>
@@ -85,19 +84,24 @@
 </div>
 <p>The core of the model in Java, from <code>LotCountOptimizer</code> (comments added for this page):</p>
 <pre class="code"><code>MPVariable[] y = new MPVariable[lots];
-for (int l = 0; l &lt; lots; l++) y[l] = solver.makeBoolVar("use_lot_" + l);   // lot l is one of your lots
+// y[l] = 1 if lot l is one of your lots
+for (int l = 0; l &lt; lots; l++) y[l] = solver.makeBoolVar("use_lot_" + l);
 for (int d = 0; d &lt; days; d++) {
-    MPConstraint parkOnce = solver.makeConstraint(1, 1, "park_once_day_" + d); // one lot per class day
+    // park in exactly one lot on each class day
+    MPConstraint parkOnce = solver.makeConstraint(1, 1, "park_once_day_" + d);
     for (int l = 0; l &lt; lots; l++) {
-        if (!Double.isFinite(cost[d][l])) continue;                           // permit not valid there
+        // skip lots your permit can't use that day
+        if (!Double.isFinite(cost[d][l])) continue;
         x[d][l] = solver.makeBoolVar("park_d" + d + "_l" + l);
         parkOnce.setCoefficient(x[d][l], 1);
+        // x[d][l] - y[l] &lt;= 0: park only in lots you picked
         MPConstraint onlyPicked = solver.makeConstraint(-inf, 0, "picked_d" + d + "_l" + l);
-        onlyPicked.setCoefficient(x[d][l], 1);                                // x[d][l] - y[l] &lt;= 0
+        onlyPicked.setCoefficient(x[d][l], 1);
         onlyPicked.setCoefficient(y[l], -1);
         objective.setCoefficient(x[d][l], cost[d][l]);
     }
 }
+// use at most K lots in the week
 MPConstraint atMostK = solver.makeConstraint(0, maxLots, "at_most_k_lots");
 for (int l = 0; l &lt; lots; l++) atMostK.setCoefficient(y[l], 1);
 objective.setMinimization();</code></pre>
