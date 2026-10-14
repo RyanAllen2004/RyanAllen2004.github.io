@@ -381,3 +381,106 @@ dialog.viewer .close {
 .skills { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 @media (max-width: 1000px) { .skills { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .skills { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---- 10/14 upgrade: heavier name, résumé button,
+   shaded bands, result strips, skill tags, and a richer hero demo in a raised panel ---- */
+:root { --shade: #EBEFF3; --bar: #7A899B; }
+
+.hero h1 { font-weight: 800; }
+.top nav .cta a { display: inline-block; border: 1.5px solid var(--ink); border-radius: 4px; padding: 1px 11px; color: var(--ink); font-weight: 600; }
+.top nav .cta a:hover { background: var(--ink); color: var(--paper); text-decoration: none; }
+
+/* Every other home section sits on a slightly darker band */
+.section.shade { background: var(--shade); }
+
+/* Results as a strip of figures, after the title block on the project pages */
+.stats { list-style: none; margin: 4px 0 20px; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 60ch;
+  background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; }
+.work-small .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.stats li { min-width: 0; padding: 12px 14px 13px; border-left: 1px solid var(--rule-soft); }
+.stats li:first-child { border-left: 0; }
+.stats b { display: block; font-family: var(--display); font-weight: 700; font-size: clamp(1.75rem, 2.4vw, 2.2rem); line-height: 1; letter-spacing: -0.01em; color: var(--ink); }
+.stats span { display: block; margin-top: 7px; font-family: var(--display); font-weight: 500; font-size: 0.97rem; line-height: 1.3; color: var(--ink-2); }
+@media (max-width: 560px) {
+  .stats, .work-small .stats { grid-template-columns: minmax(0, 1fr); }
+  .stats li { display: grid; grid-template-columns: 4.4rem minmax(0, 1fr); gap: 12px; align-items: baseline; padding: 10px 12px; border-left: 0; border-top: 1px solid var(--rule-soft); }
+  .stats li:first-child { border-top: 0; }
+  .stats b { font-size: 1.6rem; }
+  .stats span { margin-top: 0; }
+}
+
+/* Skills: one row per group, items as tags */
+.skillrows > div { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 10px clamp(24px, 4vw, 56px); align-items: baseline; padding: 16px 0; border-top: 1px solid var(--rule-soft); }
+.skillrows > div:first-child { border-top: 0; padding-top: 0; }
+.skillrows h3 { font-size: 1.2rem; }
+.tags { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.tags li { font-family: var(--display); font-weight: 500; font-size: 1.02rem; line-height: 1.25; padding: 5px 11px; color: var(--ink);
+  background: var(--surface); border: 1px solid var(--rule); border-radius: 3px; }
+@media (max-width: 760px) { .skillrows > div { grid-template-columns: minmax(0, 1fr); } }
+
+/* Hero demo: raised panel, play, pick-your-own, result and trade-off chart */
+.solver.panel { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: clamp(14px, 1.8vw, 22px);
+  box-shadow: 0 1px 1px rgba(19, 35, 58, 0.04), 0 22px 44px -28px rgba(19, 35, 58, 0.5); }
+.solver.panel .solver-frame { border-radius: 4px; }
+.solver-controls { justify-content: flex-start; gap: 10px 14px; margin-top: 14px; }
+.play { flex: none; display: grid; place-items: center; width: 42px; height: 42px; padding: 0; border: 0; border-radius: 50%;
+  background: var(--ink); color: var(--paper); cursor: pointer; }
+.play:hover { background: var(--signal); color: #fff; }
+.play svg { width: 18px; height: 18px; }
+.play .i-pause, .play.on .i-play { display: none; }
+.play.on .i-pause { display: inline; }
+.btn.small { min-height: 40px; padding: 6px 12px; font-size: 1rem; background: var(--surface); cursor: pointer; }
+.solver-controls .pick { margin-left: auto; }
+.solver.picking .pick { background: var(--ink); color: var(--paper); }
+.solver.picking .solver-frame { cursor: crosshair; }
+.solver.picking .lot.cand { cursor: pointer; }
+.solver.picking .lot.cand:hover { fill: var(--ink-3); }
+.solver.picking .lot.cand.open:hover { fill: var(--signal-text); }
+.solver .lot.cand:focus { outline: none; }
+.solver .lot.cand:focus-visible { stroke: var(--focus); stroke-width: 14; }
+
+.solver-result { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 18px; align-items: center; margin-top: 14px; padding: 12px 0;
+  border-top: 1px solid var(--rule-soft); border-bottom: 1px solid var(--rule-soft); }
+.avgwalk { margin: 0; min-width: 6.4rem; font-family: var(--display); }
+.avgwalk strong { display: block; font-size: 2.3rem; font-weight: 700; line-height: 1; letter-spacing: -0.01em; }
+.avgwalk span { display: block; margin-top: 4px; font-size: 0.95rem; color: var(--ink-2); }
+.say { margin: 0; font-family: var(--display); font-size: 1.06rem; line-height: 1.35; }
+
+.curve { margin-top: 14px; min-height: 132px; }
+.curve svg { display: block; width: 100%; height: auto; overflow: visible; }
+.curve text { font-family: var(--display); font-size: 13px; fill: var(--ink-2); }
+.curve .ttl { font-size: 14px; font-weight: 600; }
+.curve .tick.sel, .curve .val { fill: var(--ink); font-weight: 700; }
+.curve .val { font-size: 14px; }
+.curve .grid { stroke: var(--rule-soft); stroke-width: 1; }
+.curve .base { stroke: var(--rule); stroke-width: 1; }
+.curve .bar { fill: var(--bar); }
+.curve .bar.on { fill: var(--signal); }
+.curve .hit { fill: transparent; cursor: pointer; }
+.curve .gap { stroke: var(--ink); stroke-width: 2; }
+.curve .you { fill: var(--ink); stroke: var(--surface); stroke-width: 2; }
+@media (max-width: 480px) {
+  .kpick button { min-width: 36px; }
+  .solver-controls .pick { margin-left: 0; }
+  .avgwalk strong { font-size: 2rem; }
+}
+
+/* Hero buttons: one row when the column is wide enough; otherwise the résumé on top and the other two side by side */
+.hero .intro { container-type: inline-size; }
+.hero .actions { gap: 8px; }
+.hero .actions .btn { padding: 10px 14px; justify-content: center; }
+@container (max-width: 425px) {
+  .hero .actions { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .hero .actions .primary { grid-column: 1 / -1; }
+}
+
+/* Demo controls on phones: label on top, play beside the lot buttons, pick button full width */
+@media (max-width: 480px) {
+  .solver-controls { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 10px; align-items: center; }
+  .solver-controls .kpick { display: contents; }
+  #k-label { grid-row: 1; grid-column: 1 / -1; color: var(--ink-2); }
+  .solver-controls .play { grid-row: 2; grid-column: 1; }
+  .kpick .seg { grid-row: 2; grid-column: 2; display: flex; }
+  .kpick .seg button { flex: 1; min-width: 0; }
+  .solver-controls .pick { grid-row: 3; grid-column: 1 / -1; justify-content: center; }
+}

@@ -120,39 +120,49 @@
     });
   });
 
-  // ---------- Home: choose k parking lots, minimize the average walk ----------
+  // ---------- Home: which k parking lots minimize the average walk? ----------
   var host = document.getElementById("solver");
   if (!host) return;
+  var say = document.getElementById("solver-say");
+  var walkEl = document.getElementById("solver-walk");
 
   fetch(host.getAttribute("data-src")).then(function (r) { return r.json(); }).then(build).catch(function () {
     host.querySelector(".solver-frame").setAttribute("data-failed", "");
-    document.getElementById("solver-readout").textContent = "The map didn't load. Refresh the page to try again.";
+    say.textContent = "The map didn't load. Refresh the page to try again.";
   });
+
+  var MAXK = 6;
+  var ORD = ["", "first", "second", "third", "fourth", "fifth", "sixth"];
+  var NUM = ["no", "one", "two", "three", "four", "five", "six"];
+  function r5(v) { return Math.round(v / 5) * 5; }
+  function listNames(a) { return a.length < 2 ? a.join("") : a.slice(0, -1).join(", ") + " and " + a[a.length - 1]; }
 
   function build(d) {
     var frame = host.querySelector(".solver-frame");
     var view = (host.getAttribute("data-view") || ("0 0 " + d.w + " " + d.h)).split(" ").map(Number);
     var svg = el("svg", { viewBox: view.join(" "), role: "img",
-      "aria-label": "Map of the University of Arkansas campus showing parking lots, academic buildings, and lines from each building to its nearest chosen lot." });
+      "aria-label": "Map of the University of Arkansas campus showing parking lots, the buildings where classes meet, and lines from each building to its nearest open lot." });
     baseLayers(svg, d);
 
-    var cand = [], lotEls = [];
     function inView(o) { return o.x >= view[0] && o.x <= view[0] + view[2] && o.y >= view[1] && o.y <= view[1] + view[3]; }
+    var cand = [], lotEls = [];
     d.lots.forEach(function (l) {
       var isCand = l.cand && inView(l);
       var p = el("path", { d: l.d, class: "lot" + (isCand ? " cand" : "") }, svg);
       if (isCand) {
         var spaces = l.s ? "about " + l.s.toLocaleString() + " spaces" : "spaces unknown";
         p.setAttribute("data-tip", l.n + ": " + l.t.toLowerCase() + ", " + spaces);
+        p.setAttribute("aria-label", l.n);
         cand.push(l); lotEls.push(p);
       }
     });
     var gLines = el("g", {}, svg);
     var gDem = el("g", {}, svg);
-    d.dem = d.dem.filter(inView);
-    d.dem.forEach(function (b) {
+    var dem = d.dem.filter(inView);
+    var demEls = dem.map(function (b) {
       var c = el("circle", { cx: b.x, cy: b.y, r: 15, class: "dem" }, gDem);
       c.setAttribute("data-tip", b.n);
+      return c;
     });
     var gHub = el("g", {}, svg);
 
@@ -168,78 +178,266 @@
 
     frame.appendChild(svg);
 
-    // distance matrix: buildings x candidate lots, straight line, metres
-    var D = d.dem.map(function (b) { return cand.map(function (l) { return Math.hypot(l.x - b.x, l.y - b.y); }); });
-    function cost(S) {
+    // Straight-line distance in metres from candidate lot j to class building i
+    var n = cand.length, m = dem.length;
+    var D = cand.map(function (l) {
+      var row = new Float64Array(m);
+      for (var i = 0; i < m; i++) row[i] = Math.hypot(l.x - dem[i].x, l.y - dem[i].y);
+      return row;
+    });
+    function average(S) {
       var tot = 0;
-      for (var i = 0; i < D.length; i++) { var m = Infinity; for (var j = 0; j < S.length; j++) { var v = D[i][S[j]]; if (v < m) m = v; } tot += m; }
-      return tot / D.length;
-    }
-    // Greedy start, then Teitz-Bart interchange until no swap helps.
-    var cache = {};
-    function solve(k) {
-      if (cache[k]) return cache[k];
-      var S = [];
-      for (var a = 0; a < k; a++) {
-        var best = Infinity, bj = -1;
-        for (var j = 0; j < cand.length; j++) { if (S.indexOf(j) >= 0) continue; var c = cost(S.concat([j])); if (c < best) { best = c; bj = j; } }
-        S.push(bj);
+      for (var i = 0; i < m; i++) {
+        var b = Infinity;
+        for (var s = 0; s < S.length; s++) if (D[S[s]][i] < b) b = D[S[s]][i];
+        tot += b;
       }
-      var cur = cost(S), improved = true;
-      while (improved) {
-        improved = false;
-        for (var i = 0; i < k; i++) for (var j2 = 0; j2 < cand.length; j2++) {
-          if (S.indexOf(j2) >= 0) continue;
-          var T = S.slice(); T[i] = j2; var c2 = cost(T);
-          if (c2 < cur - 1e-9) { S = T; cur = c2; improved = true; }
-        }
-      }
-      return (cache[k] = { S: S, avg: cur });
+      return tot / m;
     }
 
-    var readout = document.getElementById("solver-readout");
-    var opened = document.getElementById("solver-opened");
-    var anim = [];
-    function draw(k, animate) {
-      var sol = solve(k);
+    // Exact p-median by branch and bound. Lots are tried best-first (by their one-lot cost).
+    // Bound: every building walks to its nearest lot among the ones still allowed. Bounds only
+    // grow as fewer lots remain, so the first one that can't beat the best answer ends the loop.
+    var order = cand.map(function (_, j) { return j; });
+    var single = order.map(function (j) { var s = 0; for (var i = 0; i < m; i++) s += D[j][i]; return s; });
+    order.sort(function (a, b) { return single[a] - single[b]; });
+    var suf = new Array(n + 1);
+    suf[n] = new Float64Array(m).fill(Infinity);
+    for (var p = n - 1; p >= 0; p--) {
+      var row = D[order[p]], after = suf[p + 1], here = new Float64Array(m);
+      for (var i = 0; i < m; i++) here[i] = row[i] < after[i] ? row[i] : after[i];
+      suf[p] = here;
+    }
+    function solve(k) {
+      var bestTot = Infinity, bestSet = null, chosen = [];
+      (function search(start, depth, cur) {
+        var i;
+        if (depth === k) {
+          var s = 0;
+          for (i = 0; i < m; i++) s += cur[i];
+          if (s < bestTot - 1e-9) { bestTot = s; bestSet = chosen.slice(); }
+          return;
+        }
+        for (var q = start; q <= n - (k - depth); q++) {
+          var bound = 0, sq = suf[q];
+          for (i = 0; i < m; i++) bound += cur[i] < sq[i] ? cur[i] : sq[i];
+          if (bound >= bestTot - 1e-9) break;
+          var r = D[order[q]], next = new Float64Array(m);
+          for (i = 0; i < m; i++) next[i] = cur[i] < r[i] ? cur[i] : r[i];
+          chosen.push(order[q]);
+          search(q + 1, depth + 1, next);
+          chosen.pop();
+        }
+      })(0, 0, new Float64Array(m).fill(Infinity));
+      return { S: bestSet, avg: bestTot / m };
+    }
+    var best = [null];
+    for (var kk = 1; kk <= MAXK; kk++) best.push(solve(kk));
+
+    var state = { k: 3, mode: "solver", mine: [], timer: null };
+    var anim = [], lastLot = dem.map(function () { return -1; });
+
+    // Draw walk lines from each building to its nearest open lot. Only lines that change are animated.
+    function draw(S, animate) {
       anim.forEach(function (a) { a.cancel(); }); anim = [];
       while (gLines.firstChild) gLines.removeChild(gLines.firstChild);
       while (gHub.firstChild) gHub.removeChild(gHub.firstChild);
-      lotEls.forEach(function (p, j) { p.classList.toggle("open", sol.S.indexOf(j) >= 0); });
-      d.dem.forEach(function (b, i) {
-        var bj = sol.S[0];
-        sol.S.forEach(function (j) { if (D[i][j] < D[i][bj]) bj = j; });
-        var l = cand[bj];
+      lotEls.forEach(function (p, j) {
+        var on = S.indexOf(j) >= 0;
+        p.classList.toggle("open", on);
+        if (state.mode === "pick") p.setAttribute("aria-checked", on ? "true" : "false");
+      });
+      dem.forEach(function (b, i) {
+        if (!S.length) { demEls[i].setAttribute("data-tip", b.n); lastLot[i] = -1; return; }
+        var bj = S[0];
+        S.forEach(function (j) { if (D[j][i] < D[bj][i]) bj = j; });
+        var l = cand[bj], len = D[bj][i];
+        demEls[i].setAttribute("data-tip", b.n + ": " + r5(len) + " m to " + l.n);
         var line = el("line", { x1: l.x, y1: l.y, x2: b.x, y2: b.y, class: "assign" }, gLines);
-        if (animate && !reduce && line.animate) {
-          var len = D[i][bj];
+        if (animate && !reduce && line.animate && lastLot[i] !== bj) {
           line.setAttribute("stroke-dasharray", len + " " + len);
           anim.push(line.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }],
             { duration: 520, delay: Math.min(420, len * 0.35), easing: "cubic-bezier(.2,.7,.2,1)", fill: "both" }));
         }
+        lastLot[i] = bj;
       });
-      sol.S.forEach(function (j) { el("circle", { cx: cand[j].x, cy: cand[j].y, r: 30, class: "hub" }, gHub); });
-      var names = sol.S.map(function (j) { return cand[j].n; }).sort(function (a, b) { return a.localeCompare(b, "en", { numeric: true }); });
-      readout.innerHTML = "Average walk <strong>" + (Math.round(sol.avg / 5) * 5) + " m</strong>";
-      opened.textContent = "Opens " + names.join(", ");
+      S.forEach(function (j) { el("circle", { cx: cand[j].x, cy: cand[j].y, r: 30, class: "hub" }, gHub); });
     }
 
-    var btns = host.querySelectorAll(".kpick button");
-    function pick(btn, focus) {
-      btns.forEach(function (b) { var on = b === btn; b.setAttribute("aria-checked", on); b.tabIndex = on ? 0 : -1; });
-      if (focus) btn.focus();
-      draw(+btn.getAttribute("data-k"), true);
+    function names(S) {
+      return S.map(function (j) { return cand[j].n; }).sort(function (a, b) { return a.localeCompare(b, "en", { numeric: true }); });
     }
-    btns.forEach(function (b, i) {
-      b.addEventListener("click", function () { pick(b, false); });
-      b.addEventListener("keydown", function (e) {
-        var n = null;
-        if (e.key === "ArrowRight" || e.key === "ArrowDown") n = btns[(i + 1) % btns.length];
-        if (e.key === "ArrowLeft" || e.key === "ArrowUp") n = btns[(i - 1 + btns.length) % btns.length];
-        if (n) { e.preventDefault(); pick(n, true); }
+    function showSolver() {
+      var k = state.k, sol = best[k];
+      walkEl.textContent = r5(sol.avg) + " m";
+      var text = "Opens " + listNames(names(sol.S)) + ". ";
+      if (k < MAXK) text += "A " + ORD[k + 1] + " lot would save another " + r5(sol.avg - best[k + 1].avg) + " m.";
+      else text += "Going from five lots to six saves only " + r5(best[5].avg - sol.avg) + " m.";
+      say.textContent = text;
+    }
+    function showPick(note) {
+      var c = state.mine.length, lead = note ? note + " " : "";
+      if (!c) {
+        walkEl.textContent = "–";
+        say.textContent = lead + "Select lots on the map to open them, up to six, and see how close you get to the best layout.";
+        return;
+      }
+      var mine = average(state.mine), opt = best[c].avg;
+      var what = c === 1 ? "single lot" : NUM[c] + " lots";
+      walkEl.textContent = r5(mine) + " m";
+      if (mine - opt < 1e-6) { say.textContent = lead + "You found the best " + what + ": " + r5(opt) + " m."; return; }
+      var tie = r5(mine) === r5(opt);
+      var a = tie ? Math.round(mine) : r5(mine), b = tie ? Math.round(opt) : r5(opt);
+      var pct = Math.round((mine / opt - 1) * 100);
+      say.textContent = lead + "Your " + (c === 1 ? "lot" : NUM[c] + " lots") + ": " + a + " m. The best " + what + ": " + b + " m, so yours is " +
+        (pct < 1 ? "less than 1%" : pct + "%") + " longer.";
+    }
+
+    // Average walk by number of lots: one bar per k, drawn at the panel's real width so text stays legible
+    var curve = document.getElementById("solver-curve");
+    function drawCurve() {
+      var W = Math.max(260, Math.round(curve.clientWidth || 300)), H = 132;
+      var padL = 46, padR = 10, padT = 24, padB = 24;
+      var pick = state.mode === "pick" ? state.mine.length : 0;
+      var mine = pick ? average(state.mine) : 0;
+      var top = Math.max(500, Math.ceil(mine / 100) * 100);
+      var x0 = padL, x1 = W - padR, band = (x1 - x0) / MAXK, bw = Math.min(24, band * 0.5);
+      function y(v) { return padT + (H - padT - padB) * (1 - v / top); }
+      var sel = state.mode === "pick" ? pick : state.k;
+      var label = "Best average walk by number of lots: " + best.slice(1).map(function (s, i) {
+        return (i + 1) + (i ? " lots " : " lot ") + r5(s.avg) + " m"; }).join(", ") + (pick ? ". Your " + pick + ": " + r5(mine) + " m." : ".");
+      var s = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": label });
+      var cap = el("text", { x: 0, y: 12, class: "ttl" }, s); cap.textContent = "Best average walk by number of lots";
+      [0, top / 2, top].forEach(function (g) {
+        el("line", { x1: x0, x2: x1, y1: y(g), y2: y(g), class: g ? "grid" : "base" }, s);
+        var tk = el("text", { x: x0 - 8, y: y(g) + 4, "text-anchor": "end", class: "tick" }, s);
+        tk.textContent = g ? g + " m" : "0";
+      });
+      best.slice(1).forEach(function (sol, i) {
+        var k = i + 1, cx = x0 + band * (i + 0.5), yt = y(sol.avg), yb = y(0), x = cx - bw / 2, r = 4;
+        el("path", { d: "M" + x + " " + yb + "V" + (yt + r) + "Q" + x + " " + yt + " " + (x + r) + " " + yt + "H" + (x + bw - r) +
+          "Q" + (x + bw) + " " + yt + " " + (x + bw) + " " + (yt + r) + "V" + yb + "Z", class: "bar" + (k === sel ? " on" : "") }, s);
+        var kt = el("text", { x: cx, y: H - 6, "text-anchor": "middle", class: "tick" + (k === sel ? " sel" : "") }, s);
+        kt.textContent = k;
+        if (k === sel && !pick) { var vt = el("text", { x: cx, y: yt - 7, "text-anchor": "middle", class: "val" }, s); vt.textContent = r5(sol.avg) + " m"; }
+        var hit = el("rect", { x: cx - band / 2, y: padT - 6, width: band, height: H - padT + 6, class: "hit" }, s);
+        hit.setAttribute("data-tip", k + (k === 1 ? " lot" : " lots") + ": best average walk " + r5(sol.avg) + " m");
+        hit.addEventListener("click", function () { stop(); choose(k, true); });
+      });
+      if (pick && pick <= MAXK) {
+        var cx2 = x0 + band * (pick - 0.5), ym = y(mine), yo = y(best[pick].avg);
+        if (yo - ym > 1) el("line", { x1: cx2, x2: cx2, y1: yo, y2: ym, class: "gap" }, s);
+        el("circle", { cx: cx2, cy: ym, r: 5, class: "you" }, s);
+        var right = cx2 + 60 < W;
+        var yl = el("text", { x: right ? cx2 + 10 : cx2 - 10, y: ym + 4, "text-anchor": right ? "start" : "end", class: "val" }, s);
+        yl.textContent = "You";
+      }
+      curve.textContent = "";
+      curve.appendChild(s);
+    }
+
+    var kbtns = host.querySelectorAll(".kpick button");
+    function setButtons() {
+      kbtns.forEach(function (b) {
+        var k = +b.getAttribute("data-k");
+        b.setAttribute("aria-checked", state.mode === "solver" && k === state.k ? "true" : "false");
+        b.tabIndex = k === state.k ? 0 : -1;
+      });
+    }
+    function choose(k, animate) {
+      if (state.mode === "pick") leavePick();
+      state.k = k;
+      setButtons();
+      draw(best[k].S, animate);
+      showSolver();
+      drawCurve();
+    }
+
+    // Pick your own lots
+    var pickBtn = document.getElementById("solver-pick");
+    function enterPick() {
+      stop();
+      state.mode = "pick"; state.mine = [];
+      host.classList.add("picking");
+      lotEls.forEach(function (p) { p.setAttribute("tabindex", "0"); p.setAttribute("role", "checkbox"); p.setAttribute("aria-checked", "false"); });
+      pickBtn.textContent = "Show the best lots";
+      setButtons();
+      draw([], false); showPick(); drawCurve();
+    }
+    function leavePick() {
+      state.mode = "solver";
+      host.classList.remove("picking");
+      lotEls.forEach(function (p) { p.removeAttribute("tabindex"); p.removeAttribute("role"); p.removeAttribute("aria-checked"); });
+      pickBtn.textContent = "Pick your own lots";
+    }
+    pickBtn.addEventListener("click", function () {
+      if (state.mode !== "pick") { enterPick(); return; }
+      var c = state.mine.length;
+      choose(c >= 1 && c <= MAXK ? c : state.k, true);
+    });
+    function toggle(j) {
+      var at = state.mine.indexOf(j), note = "";
+      if (at >= 0) state.mine.splice(at, 1);
+      else if (state.mine.length >= MAXK) note = "Six lots is the limit here. Close one first.";
+      else state.mine.push(j);
+      draw(state.mine, true); showPick(note); drawCurve();
+    }
+    // A click on a lot opens that lot; a click near one snaps to the nearest, so small lots are easy to hit on a phone.
+    svg.addEventListener("click", function (e) {
+      if (state.mode !== "pick") return;
+      var j = lotEls.indexOf(e.target);
+      if (j < 0) {
+        var ctm = svg.getScreenCTM();
+        if (!ctm) return;
+        var pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+        var q = pt.matrixTransform(ctm.inverse()), bd = 170;
+        cand.forEach(function (l, jj) { var dd = Math.hypot(l.x - q.x, l.y - q.y); if (dd < bd) { bd = dd; j = jj; } });
+      }
+      if (j >= 0) toggle(j);
+    });
+    lotEls.forEach(function (p, j) {
+      p.addEventListener("keydown", function (e) {
+        if (state.mode === "pick" && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); toggle(j); }
       });
     });
-    var start = host.querySelector('.kpick button[aria-checked="true"]') || btns[2];
-    draw(+start.getAttribute("data-k"), true);
+
+    // Play: open one lot at a time, from one to six
+    var playBtn = document.getElementById("solver-play");
+    function stop() {
+      if (state.timer) { clearInterval(state.timer); state.timer = null; }
+      playBtn.classList.remove("on");
+      playBtn.setAttribute("aria-label", "Play: open one lot at a time");
+    }
+    function play() {
+      var k = 1;
+      choose(k, true);
+      playBtn.classList.add("on");
+      playBtn.setAttribute("aria-label", "Pause");
+      state.timer = setInterval(function () {
+        choose(++k, true);
+        if (k >= MAXK) stop();
+      }, reduce ? 1800 : 1400);
+    }
+    playBtn.addEventListener("click", function () { if (state.timer) stop(); else play(); });
+
+    kbtns.forEach(function (b, i) {
+      b.addEventListener("click", function () { stop(); choose(+b.getAttribute("data-k"), true); });
+      b.addEventListener("keydown", function (e) {
+        var nb = null;
+        if (e.key === "ArrowRight" || e.key === "ArrowDown") nb = kbtns[(i + 1) % kbtns.length];
+        if (e.key === "ArrowLeft" || e.key === "ArrowUp") nb = kbtns[(i - 1 + kbtns.length) % kbtns.length];
+        if (nb) { e.preventDefault(); stop(); choose(+nb.getAttribute("data-k"), true); nb.focus(); }
+      });
+    });
+
+    var resizeQueued = false;
+    window.addEventListener("resize", function () {
+      if (resizeQueued) return;
+      resizeQueued = true;
+      requestAnimationFrame(function () { resizeQueued = false; drawCurve(); });
+    });
+
+    var start = host.querySelector('.kpick button[aria-checked="true"]');
+    choose(start ? +start.getAttribute("data-k") : 3, true);
   }
 })();
