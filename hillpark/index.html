@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HillPark | Ryan Allen</title>
+<meta name="description" content="A Java web app that recommends University of Arkansas parking for a class schedule, with an OR-Tools week plan and a Smile traffic forecast.">
+<link rel="canonical" href="https://ryanallen2004.github.io/hillpark/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="HillPark | Ryan Allen">
+<meta property="og:description" content="A Java web app that recommends University of Arkansas parking for a class schedule, with an OR-Tools week plan and a Smile traffic forecast.">
+<meta property="og:url" content="https://ryanallen2004.github.io/hillpark/">
+<meta property="og:image" content="https://ryanallen2004.github.io/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#F5F7F9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F1B2B" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="../"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#13233A"/><g stroke="#F5F7F9" stroke-width="1.6" stroke-linecap="round"><path d="M16 17 8 9M16 17l9-5M16 17l-3 9M16 17l8 7"/></g><g fill="#F5F7F9"><circle cx="8" cy="9" r="2.3"/><circle cx="25" cy="12" r="2.3"/><circle cx="13" cy="26" r="2.3"/><circle cx="24" cy="24" r="2.3"/></g><circle cx="16" cy="17" r="4" fill="#FF7A33"/></svg>Ryan Allen</a>
+    <nav aria-label="Main"><ul><li class=""><a href="../#projects">Projects</a></li><li class="opt"><a href="../#germany">Germany</a></li><li class="opt"><a href="../#experience">Experience</a></li><li class=""><a href="../assets/Ryan_Allen_Resume.pdf">Résumé</a></li></ul></nav>
+  </div>
+</header>
+<main id="main">
+<div class="case-head"><div class="wrap">
+  <a class="back" href="../#projects">All projects</a>
+  <h1>HillPark</h1>
+  <p class="standfirst">A web app that tells University of Arkansas students where to park for their class schedule, and plans the whole week with an integer program.</p>
+  <dl class="titleblock"><div class="w4"><dt>Course</dt><dd>INEG 22203 Computing Methods for Industrial Engineers II, Brandon Crisel</dd></div><div class="w2"><dt>Term</dt><dd>Fall 2026</dd></div><div class="w3"><dt>Team</dt><dd>Ryan Allen, Damir Ashinov, Sam Brown</dd></div><div class="w3"><dt>Status</dt><dd>Working version; final interface due December 6</dd></div><div class="w4"><dt>Tools</dt><dd>Java 21, Vaadin 24, Spring Boot, Google OR-Tools, Smile, Tablesaw</dd></div><div class="w2"><dt>Code</dt><dd><a href="https://github.com/RyanAllen2004/Hill-Park-Computing-App">GitHub repository</a></dd></div></dl>
+</div></div>
+<div class="wrap case">
+  <nav class="toc" aria-label="On this page"><h2>On this page</h2><ol><li><a href="#summary">Project summary and skills</a></li><li><a href="#process">Development process</a></li><li><a href="#features">Key features</a></li><li><a href="#part">My part</a></li></ol></nav>
+  <div class="prose"><section id="summary" aria-labelledby="summary-h"><h2 id="summary-h">Project summary and skills</h2>
+<p class="callout">Built with <a href="https://damirs-stupendous-site-b66f69.webflow.io/">Damir Ashinov</a> and Sam Brown. Their names link to their own ePortfolios.</p>
+<p>Parking is the most common complaint on the University of Arkansas campus. The university sold 21,124 annual car permits in fiscal 2025 for 14,632 spaces, about 1.44 permits for every space. A permit tells you where you're allowed to park, not where you should. HillPark answers the second question for one person's week.</p>
+<p>You enter your permit and your classes. For each class day, HillPark ranks the lots and garages your permit allows by walking time, driving time and traffic, estimates how full each lot will be when you arrive, and checks whether parking at the Economy lot and taking the bus would be faster. The <em>Your week</em> tab then picks the best one to three lots for the whole week.</p>
+<figure class="fig"><div class="frame"><img src="../assets/img/hillpark-plan.webp" alt="HillPark showing a plan for an example week: a tab per class day, a campus map with the walking route from the best lot, and ranked lot cards." width="1360" height="900" loading="lazy" decoding="async"></div>
+<figcaption>A plan for an example week: a tab per class day, the walking route from the best lot, and the ranked lots.</figcaption></figure>
+<h3>The data</h3>
+<ul>
+<li>110 parking lots and garages with their outlines and permit rules, and 217 campus buildings, from the university's interactive campus map</li>
+<li>Streets and footpaths from OpenStreetMap, for walking and driving routes</li>
+<li>TomTom road speeds at 12 points around campus, logged every 30 minutes since September 28 for our operations research project</li>
+<li>Razorback Transit's published bus schedule (GTFS)</li>
+</ul>
+<h3>The industrial engineering concept</h3>
+<p>Choosing lots for a week is a facility location problem: the class days are the customers, the lots are the facilities, and the question is which few facilities to open so that serving every customer costs as little as possible. That's the p-median model, and HillPark solves it as an integer program (see <a href="#features">Key features</a>). The app as a whole is a decision-support tool: it turns lot outlines, permit rules, street networks, a traffic log and a bus timetable into one recommendation, and shows the reasons behind it.</p>
+<h3>Skills I practiced</h3>
+<ul>
+<li><strong>Custom Java classes and inheritance.</strong> The interface pieces extend Vaadin's <code>Div</code> and <code>Dialog</code>, and one <code>TrafficForecast</code> interface has three implementations, so the scoring code doesn't care which forecast is chosen.</li>
+<li><strong>Collections and file input.</strong> Lots, buildings, traffic readings and bus trips are read from CSV, JSON and GTFS files into lists and lookup tables at startup.</li>
+<li><strong>External libraries.</strong> Tablesaw to clean and summarize the traffic log, Smile for the forecast, Google OR-Tools for the week plan, and Vaadin for the interface.</li>
+<li><strong>GitHub workflow.</strong> A shared repository, 35 JUnit tests, and one-click start scripts so every teammate can run it.</li>
+</ul></section><section id="process" aria-labelledby="process-h"><h2 id="process-h">Development process</h2>
+<h3>The original idea</h3>
+<p>HillPark grew out of our operations research project on campus parking. Damir and I had already mapped every lot and started logging traffic for that model, and we realized the same data could help one student decide where to park, not just help the university decide which permits each lot should take.</p>
+<h3>How the scope changed</h3>
+<p>The first version ranked lots for a single day. It grew into a plan for each class day, then added where you drive in from, an estimate of how full each lot is, park and ride from Lot 500, and a saved schedule. The last additions use the course's toolkit most directly: the Smile traffic forecast and the OR-Tools week plan.</p>
+<h3>Roadblocks and how we got past them</h3>
+<ul>
+<li><strong>No occupancy data.</strong> We've asked Transit &amp; Parking how full each lot gets, but that data hasn't arrived. Until it does, the app labels its fullness figures as estimates instead of presenting them as facts.</li>
+<li><strong>Blank bus times.</strong> About 80% of the stop times in the transit feed are empty, so HillPark fills them in by distance along each route.</li>
+<li><strong>Library limits.</strong> Vaadin versions after 24.10.7 need a paid license key, so the project stays on that version. Smile's linear models need native math libraries for every operating system, so the app leaves them out.</li>
+<li><strong>Build problems.</strong> IntelliJ picked a newer JDK on my laptop and the build failed with a confusing “JVM target 5” error. The start script now looks for Java 21 first, and the README explains the fix.</li>
+</ul></section><section id="features" aria-labelledby="features-h"><h2 id="features-h">Key features</h2>
+<h3>A week plan from an integer program</h3>
+<p><strong>What it does:</strong> you choose how many different lots you're willing to use, from one to three, and OR-Tools picks the lots and which days go to each so the week's total score is as low as possible.</p>
+<div class="model" role="group" aria-label="The week-plan integer program">
+<div class="row"><span class="k">Sets</span><span class="e"><var>D</var> = class days, <var>L</var> = lots your permit allows</span><span class="c"></span></div>
+<div class="row"><span class="k">Data</span><span class="e"><var>c<sub>dl</sub></var> = score of lot <var>l</var> on day <var>d</var></span><span class="c">walking, driving and traffic minutes</span></div>
+<div class="row"><span class="k">Variables</span><span class="e"><var>x<sub>dl</sub></var> ∈ {0, 1}, &nbsp;<var>y<sub>l</sub></var> ∈ {0, 1}</span><span class="c">park in lot <var>l</var> on day <var>d</var>; lot <var>l</var> is one of your lots</span></div>
+<div class="row"><span class="k">Minimize</span><span class="e">Σ<sub><var>d</var></sub> Σ<sub><var>l</var></sub> <var>c<sub>dl</sub></var> <var>x<sub>dl</sub></var></span><span class="c">total score for the week</span></div>
+<div class="row"><span class="k">Subject to</span><span class="e">Σ<sub><var>l</var></sub> <var>x<sub>dl</sub></var> = 1 &nbsp;for every day <var>d</var></span><span class="c">park somewhere every class day</span></div>
+<div class="row"><span class="k"></span><span class="e"><var>x<sub>dl</sub></var> ≤ <var>y<sub>l</sub></var> &nbsp;for every <var>d</var>, <var>l</var></span><span class="c">only in lots you picked</span></div>
+<div class="row"><span class="k"></span><span class="e">Σ<sub><var>l</var></sub> <var>y<sub>l</sub></var> ≤ <var>K</var></span><span class="c">at most <var>K</var> lots, your choice of 1 to 3</span></div>
+</div>
+<p>The core of the model in Java, from <code>LotCountOptimizer</code> (comments added for this page):</p>
+<pre class="code"><code>MPVariable[] y = new MPVariable[lots];
+for (int l = 0; l &lt; lots; l++) y[l] = solver.makeBoolVar("use_lot_" + l);   // lot l is one of your lots
+for (int d = 0; d &lt; days; d++) {
+    MPConstraint parkOnce = solver.makeConstraint(1, 1, "park_once_day_" + d); // one lot per class day
+    for (int l = 0; l &lt; lots; l++) {
+        if (!Double.isFinite(cost[d][l])) continue;                           // permit not valid there
+        x[d][l] = solver.makeBoolVar("park_d" + d + "_l" + l);
+        parkOnce.setCoefficient(x[d][l], 1);
+        MPConstraint onlyPicked = solver.makeConstraint(-inf, 0, "picked_d" + d + "_l" + l);
+        onlyPicked.setCoefficient(x[d][l], 1);                                // x[d][l] - y[l] &lt;= 0
+        onlyPicked.setCoefficient(y[l], -1);
+        objective.setCoefficient(x[d][l], cost[d][l]);
+    }
+}
+MPConstraint atMostK = solver.makeConstraint(0, maxLots, "at_most_k_lots");
+for (int l = 0; l &lt; lots; l++) atMostK.setCoefficient(y[l], 1);
+objective.setMinimization();</code></pre>
+<p><strong>Why it matters:</strong> a person can easily find the best lot for one day, but not the best split across a week. In the example week, one lot all week (Lot 209) scores 178. Two lots (Lot 446 on Monday, Wednesday and Friday, Lot 204 on Tuesday and Thursday) score 149, 16% better. With at most 7 × 110 binary variables, SCIP solves it in milliseconds, and the tests check its answer against brute force on 25 random weeks.</p>
+<figure class="fig" style="max-width:440px"><div class="frame"><img src="../assets/img/hillpark-week.webp" alt="The Your week tab: two lots chosen, Lot 446 for Monday, Wednesday and Friday and Lot 204 for Tuesday and Thursday, with a week total 16% lower than using one lot." width="860" height="1315" loading="lazy" decoding="async"></div>
+<figcaption>The <em>Your week</em> tab with a limit of two lots.</figcaption></figure>
+
+<h3>A traffic forecast trained with Smile</h3>
+<p><strong>What it does:</strong> predicts how slow each road into campus will be on a given day and half hour, from the road's location, type and normal speed. It trains a random forest and a gradient-boosting model on our TomTom log and tests them against plain half-hour averages on the newest 20% of the readings, days the models never saw.</p>
+<div class="tablewrap"><table class="data">
+<thead><tr><th>Forecast</th><th>How</th><th class="n">Test error (MSE)</th><th class="n">R²</th></tr></thead>
+<tbody>
+<tr><td>Half-hour averages</td><td>Tablesaw summary by road, weekday and half hour</td><td class="n">0.0115</td><td class="n">0.32</td></tr>
+<tr><td>Random forest</td><td>Smile, 300 trees</td><td class="n">0.0084</td><td class="n">0.50</td></tr>
+<tr class="hl"><td>Gradient boosting</td><td>Smile, 300 trees, shrinkage 0.05</td><td class="n">0.0082</td><td class="n">0.51</td></tr>
+</tbody></table></div>
+<p><strong>Why it matters:</strong> driving time depends on when you arrive, and a two-week log is too thin to average every road and half hour on its own. The models share what they learn across roads and times. The app uses whichever tests best and retrains each time it starts, so it improves as the log grows.</p>
+
+<h3>Park and ride from real bus times</h3>
+<p><strong>What it does:</strong> finds the latest bus from Lot 500 that still gets you to your first class on time, the first one back after your last class, and compares the trip with driving to your best lot. Walking routes come from Dijkstra's algorithm on about 13,800 street and footpath nodes.</p>
+<div class="pair">
+<figure class="fig" style="margin:0"><div class="frame"><img src="../assets/img/hillpark-ride-map.webp" alt="Map of a park-and-ride trip: Lot 500, the Route 500 Express along Razorback Road, and the walk to class." width="1360" height="900" loading="lazy" decoding="async"></div></figure>
+<figure class="fig" style="margin:0"><div class="frame"><img src="../assets/img/hillpark-ride-card.webp" alt="The park-and-ride card: be parked at Lot 500 by 9:09 am, 20 minutes on the bus, with each step of the trip." width="860" height="399" loading="lazy" decoding="async"></div></figure>
+</div>
+<p style="margin-top:14px"><strong>Why it matters:</strong> every permit can park at Lot 500, so for many students the bus is the real alternative to circling a full lot. For a 9:40 am class at the J.B. Hunt building, HillPark says to be parked by 9:09 and take the 9:12 Route 500 Express.</p></section><section id="part" aria-labelledby="part-h"><h2 id="part-h">My part</h2>
+<p>I set up our shared repository and built the first working version on October 12 and 13, working with Claude, an AI assistant. I decided what the app should do, asked for each feature, tested it in the browser and pushed the changes. Building the traffic forecast in Smile and the week plan in OR-Tools was my call, so the app would use the tools from our course. The lot and traffic data comes from the parking project Damir and I built together.</p>
+<p class="note">As the course requires, the complete AI conversation is submitted with the project, and the <a href="https://github.com/RyanAllen2004/Hill-Park-Computing-App#ai-use">README</a> says where AI was used. HillPark is a student project, not an official University of Arkansas tool.</p></section></div>
+</div>
+</main>
+<footer class="foot" id="contact">
+  <div class="wrap">
+    <div>
+      <h2>Get in touch</h2>
+      <p>I'm looking for a part-time engineering internship in Northwest Arkansas for this school year, and for an internship in Germany starting February 2028. Operations, supply chain, manufacturing and consulting all interest me.</p>
+      <ul class="contact">
+        <li><a href="mailto:rja008@uark.edu">rja008@uark.edu</a></li>
+        <li><a href="https://www.linkedin.com/in/ryan-allen-693738390">LinkedIn</a></li>
+        <li><a href="https://github.com/RyanAllen2004">GitHub</a></li>
+        <li><a href="../assets/Ryan_Allen_Resume.pdf">Résumé (PDF)</a></li>
+      </ul>
+    </div>
+    <div class="fine">
+      <p>I built this site with help from Claude, an AI assistant, and document that use for my courses. The project write-ups come from my coursework and project files.</p>
+      <p>Map data: University of Arkansas campus map and © OpenStreetMap contributors. Student work, not affiliated with the University of Arkansas.</p>
+      <p>Updated October 2026.</p>
+    </div>
+  </div>
+</footer>
+<script src="../assets/site.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Race-Car Performance Model | Ryan Allen</title>
+<meta name="description" content="Three machine-learning models trained on 60,000 simulated races, and a 1,000-point upgrade budget spent where the model said it would pay off most.">
+<link rel="canonical" href="https://ryanallen2004.github.io/race-car/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Race-Car Performance Model | Ryan Allen">
+<meta property="og:description" content="Three machine-learning models trained on 60,000 simulated races, and a 1,000-point upgrade budget spent where the model said it would pay off most.">
+<meta property="og:url" content="https://ryanallen2004.github.io/race-car/">
+<meta property="og:image" content="https://ryanallen2004.github.io/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#F5F7F9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F1B2B" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="../"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#13233A"/><g stroke="#F5F7F9" stroke-width="1.6" stroke-linecap="round"><path d="M16 17 8 9M16 17l9-5M16 17l-3 9M16 17l8 7"/></g><g fill="#F5F7F9"><circle cx="8" cy="9" r="2.3"/><circle cx="25" cy="12" r="2.3"/><circle cx="13" cy="26" r="2.3"/><circle cx="24" cy="24" r="2.3"/></g><circle cx="16" cy="17" r="4" fill="#FF7A33"/></svg>Ryan Allen</a>
+    <nav aria-label="Main"><ul><li class=""><a href="../#projects">Projects</a></li><li class="opt"><a href="../#germany">Germany</a></li><li class="opt"><a href="../#experience">Experience</a></li><li class=""><a href="../assets/Ryan_Allen_Resume.pdf">Résumé</a></li></ul></nav>
+  </div>
+</header>
+<main id="main">
+<div class="case-head"><div class="wrap">
+  <a class="back" href="../#projects">All projects</a>
+  <h1>Race-car performance model</h1>
+  <p class="standfirst">Predicting championship points from 60,000 simulated races, then spending a fixed 1,000-point upgrade budget where the model said it would pay off most.</p>
+  <dl class="titleblock"><div class="w4"><dt>Course</dt><dd>INEG 22203 Computing Methods for Industrial Engineers II, Assignment 4</dd></div><div class="w2"><dt>Term</dt><dd>Fall 2026</dd></div><div class="w2"><dt>Work</dt><dd>Individual</dd></div><div class="w4"><dt>Tools</dt><dd>Java, Tablesaw, Smile</dd></div><div class="w6"><dt>Result</dt><dd>70.49 points per race in the season simulation; the dataset average is 47.5</dd></div></dl>
+</div></div>
+<div class="wrap case">
+  <nav class="toc" aria-label="On this page"><h2>On this page</h2><ol><li><a href="#task">The task</a></li><li><a href="#prep">Preparing the data</a></li><li><a href="#features">Choosing features</a></li><li><a href="#models">Tuning and comparing models</a></li><li><a href="#budget">Spending the budget</a></li><li><a href="#result">Result</a></li></ol></nav>
+  <div class="prose"><section id="task" aria-labelledby="task-h"><h2 id="task-h">The task</h2>
+<p>The data held 60,000 races. Each row has a racer's 15 car and driver ratings (horsepower, torque, weight, grip, braking, reaction time and so on), the weather, the track type, the temperature, and the championship points that racer scored. The job had two parts: build models that predict points, then design my own racer with 1,000 upgrade points, where each level costs more than the one before, and enter it in the instructor's season-long simulation.</p></section><section id="prep" aria-labelledby="prep-h"><h2 id="prep-h">Preparing the data</h2>
+<p>Regression and tree models only do math on numbers, so I turned the weather, track type and temperature into impact scores: penalties for conditions that slow a racer down, with sun on asphalt as the baseline. Temperature became a penalty for being too hot or too cold rather than a raw number, because its effect isn't a straight line. A model given raw temperature would assume hotter is always better or always worse.</p></section><section id="features" aria-labelledby="features-h"><h2 id="features-h">Choosing features</h2>
+<p>Correlation matrices showed two redundant pairs: horsepower with torque, and downforce with aero balance. Each pair carries the same information, so a model splits the credit between them and neither looks important. Feature importance from a random forest flagged the weakest predictors. I dropped four features, the redundant half of each pair and two that each contributed under 1%, and test error went down slightly (MSE from 35.96 to 35.72).</p></section><section id="models" aria-labelledby="models-h"><h2 id="models-h">Tuning and comparing models</h2>
+<p>Tuning the random forest one setting at a time showed that tree depth mattered far more than anything else. Shallow trees can't make enough splits to capture the pattern, so they underfit; past a depth of about 16 the error levels off. More trees and bigger leaves barely moved it.</p>
+<figure class="fig"><div class="frame pad"><svg class="chart" viewBox="0 0 640 300" role="img" aria-labelledby="rc-depth"><title id="rc-depth">Random forest out-of-bag error by maximum tree depth: 63.5 at depth 3, 54.0 at 5, 45.0 at 8, 37.8 at 12, then about 37.2 from depth 16 on.</title><line class="grid" x1="56" y1="248.0" x2="616" y2="248.0"/><text x="46" y="253.0" text-anchor="end">0</text><line class="grid" x1="56" y1="194.5" x2="616" y2="194.5"/><text x="46" y="199.5" text-anchor="end">20</text><line class="grid" x1="56" y1="141.0" x2="616" y2="141.0"/><text x="46" y="146.0" text-anchor="end">40</text><line class="grid" x1="56" y1="87.5" x2="616" y2="87.5"/><text x="46" y="92.5" text-anchor="end">60</text><line class="grid" x1="56" y1="34.0" x2="616" y2="34.0"/><text x="46" y="39.0" text-anchor="end">80</text><text x="56.0" y="270" text-anchor="middle">3</text><text x="97.5" y="270" text-anchor="middle">5</text><text x="159.7" y="270" text-anchor="middle">8</text><text x="242.7" y="270" text-anchor="middle">12</text><text x="325.6" y="270" text-anchor="middle">16</text><text x="408.6" y="270" text-anchor="middle">20</text><text x="616.0" y="270" text-anchor="middle">30</text><text x="336.0" y="292" text-anchor="middle">Maximum tree depth</text><text x="46" y="16" text-anchor="start" style="font-weight:600">Out-of-bag MSE</text><path class="line" d="M56.0,78.1 L97.5,103.5 L159.7,127.6 L242.7,146.9 L325.6,148.5 L408.6,148.5 L616.0,148.5"/><circle class="dot" cx="56.0" cy="78.1" r="5"/><circle class="hit" tabindex="0" cx="56.0" cy="78.1" r="16" data-tip="Depth 3: out-of-bag MSE 63.5"/><text class="lbl" x="66.0" y="66.1" text-anchor="start">63.5</text><circle class="dot" cx="97.5" cy="103.5" r="5"/><circle class="hit" tabindex="0" cx="97.5" cy="103.5" r="16" data-tip="Depth 5: out-of-bag MSE 54.0"/><circle class="dot" cx="159.7" cy="127.6" r="5"/><circle class="hit" tabindex="0" cx="159.7" cy="127.6" r="16" data-tip="Depth 8: out-of-bag MSE 45.0"/><circle class="dot" cx="242.7" cy="146.9" r="5"/><circle class="hit" tabindex="0" cx="242.7" cy="146.9" r="16" data-tip="Depth 12: out-of-bag MSE 37.8"/><circle class="dot" cx="325.6" cy="148.5" r="5"/><circle class="hit" tabindex="0" cx="325.6" cy="148.5" r="16" data-tip="Depth 16: out-of-bag MSE 37.2"/><circle class="dot" cx="408.6" cy="148.5" r="5"/><circle class="hit" tabindex="0" cx="408.6" cy="148.5" r="16" data-tip="Depth 20: out-of-bag MSE 37.2"/><circle class="dot" cx="616.0" cy="148.5" r="5"/><circle class="hit" tabindex="0" cx="616.0" cy="148.5" r="16" data-tip="Depth 30: out-of-bag MSE 37.2"/><text class="lbl" x="608.0" y="136.5" text-anchor="end">37.2</text><line class="axis" x1="56" y1="248.0" x2="616" y2="248.0"/></svg></div>
+<figcaption>Random forest error on the races each tree didn't see while training (out-of-bag MSE), by maximum tree depth.</figcaption></figure>
+<p>Then I compared the tuned random forest with ordinary least squares (OLS) regression and gradient boosting on the same held-out races.</p>
+<figure class="fig"><div class="frame pad"><svg class="chart" viewBox="0 0 640 182" role="img" aria-labelledby="rc-mse"><title id="rc-mse">Test error by model: random forest 35.41, OLS regression 29.96, gradient boosting 29.07. Lower is better.</title><line class="grid" x1="210.0" y1="10" x2="210.0" y2="148"/><text x="210.0" y="168" text-anchor="middle">0</text><line class="grid" x1="300.0" y1="10" x2="300.0" y2="148"/><text x="300.0" y="168" text-anchor="middle">10</text><line class="grid" x1="390.0" y1="10" x2="390.0" y2="148"/><text x="390.0" y="168" text-anchor="middle">20</text><line class="grid" x1="480.0" y1="10" x2="480.0" y2="148"/><text x="480.0" y="168" text-anchor="middle">30</text><line class="grid" x1="570.0" y1="10" x2="570.0" y2="148"/><text x="570.0" y="168" text-anchor="middle">40</text><text class="lbl" x="198" y="38.0" text-anchor="end">Random forest</text><path class="bar" d="M210.0,22.0 H524.7 Q528.7,22.0 528.7,26.0 V40.0 Q528.7,44.0 524.7,44.0 H210.0 Z"/><text x="536.7" y="38.0">35.41</text><rect class="hit" tabindex="0" x="0.0" y="10.0" width="640" height="46" data-tip="Random forest: test MSE 35.41"/><text class="lbl" x="198" y="84.0" text-anchor="end">OLS regression</text><path class="bar" d="M210.0,68.0 H475.6 Q479.6,68.0 479.6,72.0 V86.0 Q479.6,90.0 475.6,90.0 H210.0 Z"/><text x="487.6" y="84.0">29.96</text><rect class="hit" tabindex="0" x="0.0" y="56.0" width="640" height="46" data-tip="OLS regression: test MSE 29.96"/><text class="lbl" x="198" y="130.0" text-anchor="end">Gradient boosting</text><path class="bar" d="M210.0,114.0 H467.6 Q471.6,114.0 471.6,118.0 V132.0 Q471.6,136.0 467.6,136.0 H210.0 Z"/><text x="479.6" y="130.0">29.07</text><rect class="hit" tabindex="0" x="0.0" y="102.0" width="640" height="46" data-tip="Gradient boosting: test MSE 29.07"/><line class="axis" x1="210.0" y1="10" x2="210.0" y2="148"/></svg></div>
+<figcaption>Test error (mean squared error, in championship points squared) on held-out races. Lower is better.</figcaption></figure>
+<p>Gradient boosting was the most accurate, but only just: OLS was within 0.9 of it and beat the random forest, which overfit. That suggests a racer's points are mostly the sum of each stat's effect plus the condition penalties, which is exactly what a linear model assumes.</p></section><section id="budget" aria-labelledby="budget-h"><h2 id="budget-h">Spending the budget</h2>
+<p>I used OLS for the build, even though it was slightly less accurate, because it gives a plain number for every stat: how many points one more level is worth. That turned the budget into a marginal-value problem. Upgrades get more expensive at higher levels, so I compared each stat's points per level with the cost of its next level and spent where the return was highest.</p>
+<div class="tablewrap"><table class="data"><thead><tr><th>Stat</th><th class="n">Level</th><th class="n">Points per level (OLS)</th></tr></thead><tbody><tr><td>Horsepower</td><td class="n">100</td><td class="n">+0.24</td></tr><tr><td>Braking efficiency</td><td class="n">100</td><td class="n">+0.18</td></tr><tr><td>Track skill</td><td class="n">90</td><td class="n">+0.16</td></tr><tr><td>Grip</td><td class="n">80</td><td class="n"></td></tr><tr><td>Reaction time</td><td class="n">80</td><td class="n"></td></tr><tr><td>Low-friction skill</td><td class="n">80</td><td class="n"></td></tr><tr><td>Downforce coefficient</td><td class="n">70</td><td class="n"></td></tr><tr><td>Aggressiveness</td><td class="n">70</td><td class="n"></td></tr><tr><td>Reliability</td><td class="n">50</td><td class="n"></td></tr><tr><td>Car weight</td><td class="n">40</td><td class="n">−0.19</td></tr><tr><td>Torque, aero balance, gearing, driver experience, consistency</td><td class="n">40</td><td class="n"></td></tr></tbody></table></div><p class="note">Every stat starts at 40, the minimum. The total cost was exactly 1,000 points.</p>
+<p>Car weight had a negative coefficient (a heavier car scores fewer points), so it stayed at the minimum. So did the stats that were redundant or barely mattered.</p></section><section id="result" aria-labelledby="result-h"><h2 id="result-h">Result</h2>
+<p>The model predicted my racer would average about 71.1 points across four test conditions, from 79.7 in sun on asphalt down to 61.1 in snow on dirt. In the instructor's season simulation it averaged <strong>70.49 points per race</strong>, close to the prediction and well above the 47.5-point average of the racers in the data.</p>
+<p>The gap of about 18 points between the sunny and snowy races is the part no build can buy back: conditions still matter whatever you spend.</p>
+<p class="note">Help I had, documented for the course: Claude explained the three model types and helped me with feature importance and debugging, and classmates Sam Brown and Damir Ashinov helped with Tablesaw loops, the Spearman correlation and setting up the random forest.</p></section></div>
+</div>
+</main>
+<footer class="foot" id="contact">
+  <div class="wrap">
+    <div>
+      <h2>Get in touch</h2>
+      <p>I'm looking for a part-time engineering internship in Northwest Arkansas for this school year, and for an internship in Germany starting February 2028. Operations, supply chain, manufacturing and consulting all interest me.</p>
+      <ul class="contact">
+        <li><a href="mailto:rja008@uark.edu">rja008@uark.edu</a></li>
+        <li><a href="https://www.linkedin.com/in/ryan-allen-693738390">LinkedIn</a></li>
+        <li><a href="https://github.com/RyanAllen2004">GitHub</a></li>
+        <li><a href="../assets/Ryan_Allen_Resume.pdf">Résumé (PDF)</a></li>
+      </ul>
+    </div>
+    <div class="fine">
+      <p>I built this site with help from Claude, an AI assistant, and document that use for my courses. The project write-ups come from my coursework and project files.</p>
+      <p>Map data: University of Arkansas campus map and © OpenStreetMap contributors. Student work, not affiliated with the University of Arkansas.</p>
+      <p>Updated October 2026.</p>
+    </div>
+  </div>
+</footer>
+<script src="../assets/site.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Campus Parking Permit Model | Ryan Allen</title>
+<meta name="description" content="A mixed-integer model that decides which permit type each University of Arkansas parking lot should serve, to shorten walks without overloading roads.">
+<link rel="canonical" href="https://ryanallen2004.github.io/parking-model/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Campus Parking Permit Model | Ryan Allen">
+<meta property="og:description" content="A mixed-integer model that decides which permit type each University of Arkansas parking lot should serve, to shorten walks without overloading roads.">
+<meta property="og:url" content="https://ryanallen2004.github.io/parking-model/">
+<meta property="og:image" content="https://ryanallen2004.github.io/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#F5F7F9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F1B2B" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="../"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#13233A"/><g stroke="#F5F7F9" stroke-width="1.6" stroke-linecap="round"><path d="M16 17 8 9M16 17l9-5M16 17l-3 9M16 17l8 7"/></g><g fill="#F5F7F9"><circle cx="8" cy="9" r="2.3"/><circle cx="25" cy="12" r="2.3"/><circle cx="13" cy="26" r="2.3"/><circle cx="24" cy="24" r="2.3"/></g><circle cx="16" cy="17" r="4" fill="#FF7A33"/></svg>Ryan Allen</a>
+    <nav aria-label="Main"><ul><li class=""><a href="../#projects">Projects</a></li><li class="opt"><a href="../#germany">Germany</a></li><li class="opt"><a href="../#experience">Experience</a></li><li class=""><a href="../assets/Ryan_Allen_Resume.pdf">Résumé</a></li></ul></nav>
+  </div>
+</header>
+<main id="main">
+<div class="case-head"><div class="wrap">
+  <a class="back" href="../#projects">All projects</a>
+  <h1>Campus parking permit model</h1>
+  <p class="standfirst">Which permit should each University of Arkansas parking lot serve? A mixed-integer model that assigns permit types to lots and drivers to lots.</p>
+  <dl class="titleblock"><div class="w4"><dt>Course</dt><dd>INEG 26103 Introduction to Operations Research, Dr. Kelly Sullivan</dd></div><div class="w2"><dt>Term</dt><dd>Fall 2026</dd></div><div class="w2"><dt>Team</dt><dd>Ryan Allen, Damir Ashinov</dd></div><div class="w4"><dt>Status</dt><dd>Approved at the October milestone; model and results due December 3</dd></div><div class="w6"><dt>Tools</dt><dd>AMPL, CPLEX, Python, GitHub</dd></div></dl>
+</div></div>
+<div class="wrap case">
+  <nav class="toc" aria-label="On this page"><h2>On this page</h2><ol><li><a href="#question">The question</a></li><li><a href="#today">Today's layout</a></li><li><a href="#model">The model</a></li><li><a href="#data">The data</a></li><li><a href="#part">My part</a></li><li><a href="#next">What's next</a></li><li><a href="#team">Team</a></li></ol></nav>
+  <div class="prose"><section id="question" aria-labelledby="question-h"><h2 id="question-h">The question</h2>
+<p>The University of Arkansas has 14,632 parking spaces and sold 21,124 annual car permits in fiscal 2025, about 1.44 for every space. In a 2024 parking study with more than 5,000 survey responses, <a href="https://uahillmag.com/2024/10/28/parking-study-seeks-to-drive-away-transportation-issues-on-campus/">87.4% said they were unsatisfied</a>. A 2025 university survey found the top complaints were congestion, the distance from parking to where people are going, and finding a space, and the university listed a <a href="https://news.uark.edu/articles/79740/campus-feedback-guides-planned-parking-enhancements">zone-based permit system</a> among the changes it's considering.</p>
+<p>Our question: if you could redraw which permit types can use each lot, which layout would shorten the walk from parking to buildings the most, and what would it cost each group of drivers?</p></section><section id="today" aria-labelledby="today-h"><h2 id="today-h">Today's layout</h2>
+<figure class="fig"><div class="frame mapbox" data-lotmap="../assets/hero-data.json" data-label="Map of the University of Arkansas campus with its 110 parking lots and garages colored by the permit each serves today."></div>
+<ul class="legend" aria-label="Legend">
+<li><span class="sw" style="background:var(--series-1)"></span>Commuter and Economy (18 lots)</li>
+<li><span class="sw" style="background:var(--series-3)"></span>Faculty/Staff (24 lots)</li>
+<li><span class="sw" style="background:var(--neutral-mark)"></span>Resident, reserved, garages, pay and other (68)</li>
+</ul>
+<figcaption>All 110 lots and garages on the university's campus map, colored by the permit each serves today. Hover a lot for its name and estimated size. Commuter, Economy and Faculty/Staff lots are the ones our model can redesignate. Resident and reserved lots stay fixed.</figcaption></figure>
+<details class="numbers"><summary>Show the numbers</summary>
+<table class="data"><thead><tr><th>Designation today</th><th class="n">Lots</th></tr></thead><tbody>
+<tr><td>Commuter</td><td class="n">17</td></tr><tr><td>Economy (Lot 500)</td><td class="n">1</td></tr><tr><td>Faculty/Staff</td><td class="n">24</td></tr>
+<tr><td>Resident</td><td class="n">28</td></tr><tr><td>Reserved</td><td class="n">22</td></tr><tr><td>Garages</td><td class="n">4</td></tr>
+<tr><td>Hourly, ADA, short-term, visitor, relocate and other</td><td class="n">14</td></tr><tr class="hl"><td>Total</td><td class="n">110</td></tr>
+</tbody></table></details></section><section id="model" aria-labelledby="model-h"><h2 id="model-h">The model</h2>
+<p>The model makes two kinds of decisions at once: which permit type each lot serves (Commuter, Faculty/Staff or Economy; resident and reserved lots stay as they are), and how many drivers from each group park in each lot. It minimizes the total walking distance from lots to buildings, weighted by group.</p>
+<div class="model" role="group" aria-label="The permit designation model">
+<div class="row"><span class="k">Sets</span><span class="e"><var>G</var> groups of drivers, <var>L</var> lots, <var>P</var> permit types</span><span class="c">groups by permit and destination</span></div>
+<div class="row"><span class="k">Variables</span><span class="e"><var>y<sub>lp</sub></var> ∈ {0, 1}</span><span class="c">lot <var>l</var> serves permit type <var>p</var></span></div>
+<div class="row"><span class="k"></span><span class="e"><var>x<sub>gl</sub></var> ≥ 0</span><span class="c">drivers from group <var>g</var> who park in lot <var>l</var></span></div>
+<div class="row"><span class="k">Minimize</span><span class="e">Σ<sub><var>g</var></sub> Σ<sub><var>l</var></sub> <var>w<sub>g</sub></var> <var>d<sub>gl</sub></var> <var>x<sub>gl</sub></var></span><span class="c">weighted walking distance</span></div>
+<div class="row"><span class="k">Subject to</span><span class="e">Σ<sub><var>l</var></sub> <var>x<sub>gl</sub></var> = <var>n<sub>g</sub></var></span><span class="c">every group gets a place to park</span></div>
+<div class="row"><span class="k"></span><span class="e">Σ<sub><var>g</var></sub> <var>x<sub>gl</sub></var> ≤ <var>r</var> <var>s<sub>l</sub></var></span><span class="c">no lot overfills; <var>r</var> allows for permit holders who aren't on campus at once</span></div>
+<div class="row"><span class="k"></span><span class="e"><var>x<sub>gl</sub></var> ≤ <var>n<sub>g</sub></var> Σ<sub><var>p</var> ∈ <var>P</var>(<var>g</var>)</sub> <var>y<sub>lp</sub></var></span><span class="c">drivers only park where their permit is allowed</span></div>
+<div class="row"><span class="k"></span><span class="e">Σ<sub><var>p</var></sub> <var>y<sub>lp</sub></var> = 1</span><span class="c">one permit type per lot</span></div>
+<div class="row"><span class="k">Extension</span><span class="e">Σ<sub><var>l</var> ∈ <var>L</var>(<var>a</var>)</sub> Σ<sub><var>g</var></sub> <var>x<sub>gl</sub></var> ≤ <var>C<sub>a</sub></var></span><span class="c">rush-hour capacity of each access road <var>a</var></span></div>
+</div>
+<p>Permits don't map one-to-one onto lots: some lots accept several permit types, so the model works from a compatibility table built from the university's parking rules. The traffic extension keeps the model from shortening walks by sending every driver down the same road.</p>
+<h3>Open questions we're working through</h3>
+<ul>
+<li><strong>The Economy problem.</strong> Economy lots accept almost every permit, so a naive model would label every lot Economy. It needs a rule that stops that.</li>
+<li><strong>One oversell ratio or several.</strong> A single ratio of 1.44 probably doesn't fit students and faculty alike, since they're on campus at different rates. We'll know more when lot-usage data arrives.</li>
+</ul></section><section id="data" aria-labelledby="data-h"><h2 id="data-h">The data</h2>
+<p>No one publishes how many spaces each lot has, so we built the dataset from public sources:</p>
+<ul>
+<li><strong>110 lots and 4 garages</strong> from the university's interactive campus map, with outlines and permit rules.</li>
+<li><strong>Space estimates</strong> from each lot's paved area, calibrated so the surface lots add up to the official 10,181 spaces. The garages hold 4,451 more, from the university's 2023 garage study.</li>
+<li><strong>Permits sold by type</strong> from the Transit &amp; Parking fiscal 2025 annual report.</li>
+<li><strong>Traffic:</strong> daily counts from 103 ArDOT stations around campus going back to 1986, and live TomTom road speeds at 12 points, logged every 30 minutes since September 28.</li>
+</ul></section><section id="part" aria-labelledby="part-h"><h2 id="part-h">My part</h2>
+<p>Damir and I built this project together rather than splitting it up: we assembled the dataset, set up the traffic logger and worked out the model side by side.</p>
+<p>We also went after the data we couldn't download. I wrote our request for lot-usage data to Transit &amp; Parking and asked the Associated Student Government president for introductions. Damir and I then met with ASG's Director of Transit and Parking on September 30 with a project brief and a list of questions for Parking staff. That request reached Transit &amp; Parking, who are now pulling lot-level data for us.</p>
+<p>I also built a project dashboard, with an AI-written prototype of the model that we'll use to check our own AMPL results. The model we hand in is ours, written in AMPL and explained in our own words, and every use of AI is recorded in our project's AI-use log.</p></section><section id="next" aria-labelledby="next-h"><h2 id="next-h">What's next</h2>
+<p>The model and results are due December 3. The experiments we've planned:</p>
+<ul>
+<li>Today's layout against the optimized one</li>
+<li>A trade-off curve between student and faculty/staff walking</li>
+<li>How sensitive the answer is to the space estimates and the oversell ratio</li>
+<li>A what-if for the garage the university plans to open on Razorback Road in 2029</li>
+</ul>
+<p>The results, a before-and-after map and the walking time saved will go here in December.</p></section><section id="team" aria-labelledby="team-h"><h2 id="team-h">Team</h2><ul class="teammates"><li>Damir Ashinov: <a href="https://damirs-stupendous-site-b66f69.webflow.io/">Damir's ePortfolio</a></li></ul><p class="note" style="margin-top:12px">A student project, not an official University of Arkansas study.</p></section></div>
+</div>
+</main>
+<footer class="foot" id="contact">
+  <div class="wrap">
+    <div>
+      <h2>Get in touch</h2>
+      <p>I'm looking for a part-time engineering internship in Northwest Arkansas for this school year, and for an internship in Germany starting February 2028. Operations, supply chain, manufacturing and consulting all interest me.</p>
+      <ul class="contact">
+        <li><a href="mailto:rja008@uark.edu">rja008@uark.edu</a></li>
+        <li><a href="https://www.linkedin.com/in/ryan-allen-693738390">LinkedIn</a></li>
+        <li><a href="https://github.com/RyanAllen2004">GitHub</a></li>
+        <li><a href="../assets/Ryan_Allen_Resume.pdf">Résumé (PDF)</a></li>
+      </ul>
+    </div>
+    <div class="fine">
+      <p>I built this site with help from Claude, an AI assistant, and document that use for my courses. The project write-ups come from my coursework and project files.</p>
+      <p>Map data: University of Arkansas campus map and © OpenStreetMap contributors. Student work, not affiliated with the University of Arkansas.</p>
+      <p>Updated October 2026.</p>
+    </div>
+  </div>
+</footer>
+<script src="../assets/site.js" defer></script>
+</body>
+</html>

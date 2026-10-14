@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Four Ways to Solve One Shipping Problem | Ryan Allen</title>
+<meta name="description" content="A 25-million-variable transportation problem solved with SCIP, CP-SAT, a linear program and a greedy heuristic, compared on cost and time.">
+<link rel="canonical" href="https://ryanallen2004.github.io/transportation/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Four Ways to Solve One Shipping Problem | Ryan Allen">
+<meta property="og:description" content="A 25-million-variable transportation problem solved with SCIP, CP-SAT, a linear program and a greedy heuristic, compared on cost and time.">
+<meta property="og:url" content="https://ryanallen2004.github.io/transportation/">
+<meta property="og:image" content="https://ryanallen2004.github.io/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#F5F7F9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F1B2B" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="../"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#13233A"/><g stroke="#F5F7F9" stroke-width="1.6" stroke-linecap="round"><path d="M16 17 8 9M16 17l9-5M16 17l-3 9M16 17l8 7"/></g><g fill="#F5F7F9"><circle cx="8" cy="9" r="2.3"/><circle cx="25" cy="12" r="2.3"/><circle cx="13" cy="26" r="2.3"/><circle cx="24" cy="24" r="2.3"/></g><circle cx="16" cy="17" r="4" fill="#FF7A33"/></svg>Ryan Allen</a>
+    <nav aria-label="Main"><ul><li class=""><a href="../#projects">Projects</a></li><li class="opt"><a href="../#germany">Germany</a></li><li class="opt"><a href="../#experience">Experience</a></li><li class=""><a href="../assets/Ryan_Allen_Resume.pdf">Résumé</a></li></ul></nav>
+  </div>
+</header>
+<main id="main">
+<div class="case-head"><div class="wrap">
+  <a class="back" href="../#projects">All projects</a>
+  <h1>Four ways to solve one shipping problem</h1>
+  <p class="standfirst">The same transportation problem, 2,500 suppliers by 10,000 outlets, solved three exact ways and one fast way, to see what each costs in time and in quality.</p>
+  <dl class="titleblock"><div class="w4"><dt>Course</dt><dd>INEG 22203 Computing Methods for Industrial Engineers II, Assignment 5</dd></div><div class="w2"><dt>Term</dt><dd>Fall 2026</dd></div><div class="w2"><dt>Work</dt><dd>Individual</dd></div><div class="w4"><dt>Tools</dt><dd>Java, Google OR-Tools (SCIP, CP-SAT, GLOP)</dd></div></dl>
+</div></div>
+<div class="wrap case">
+  <nav class="toc" aria-label="On this page"><h2>On this page</h2><ol><li><a href="#problem">The problem</a></li><li><a href="#methods">Four methods</a></li><li><a href="#results">Results</a></li><li><a href="#why">Why the linear program came out whole</a></li><li><a href="#when">What I'd use when</a></li></ol></nav>
+  <div class="prose"><section id="problem" aria-labelledby="problem-h"><h2 id="problem-h">The problem</h2>
+<p>Ship goods from 2,500 supply points to 10,000 outlets at the lowest total cost, with whole-number shipping costs from 1 to 20 per unit. Every supplier-to-outlet pair is a variable, so the full model has 25 million of them. I solved the same instance four ways and timed only the solving, not the data generation.</p></section><section id="methods" aria-labelledby="methods-h"><h2 id="methods-h">Four methods</h2>
+<ul>
+<li><strong>SCIP</strong> treats it as an integer program and uses branch and bound: solve the linear relaxation, then branch on any variable that comes out fractional.</li>
+<li><strong>CP-SAT</strong> combines constraint programming, SAT solving and local search, running several strategies in parallel. It needs integer coefficients, which this problem has.</li>
+<li><strong>GLOP</strong> solves the linear program, where shipments are allowed to be fractions.</li>
+<li><strong>A greedy heuristic</strong> I wrote: sort every route from cheapest to most expensive, then ship as much as possible along each one in turn (the least-cost method).</li>
+</ul></section><section id="results" aria-labelledby="results-h"><h2 id="results-h">Results</h2>
+<figure class="fig"><div class="frame pad"><svg class="chart" viewBox="0 0 640 244" role="img" aria-labelledby="tr-time"><title id="tr-time">Time to solve, log scale: greedy heuristic 19 milliseconds, GLOP 27.3 seconds, CP-SAT 33.4 seconds, SCIP 188.7 seconds.</title><line class="grid" x1="230.0" y1="8" x2="230.0" y2="208"/><text x="230.0" y="230" text-anchor="middle">0.01 s</text><line class="grid" x1="306.0" y1="8" x2="306.0" y2="208"/><text x="306.0" y="230" text-anchor="middle">0.1 s</text><line class="grid" x1="382.0" y1="8" x2="382.0" y2="208"/><text x="382.0" y="230" text-anchor="middle">1 s</text><line class="grid" x1="458.0" y1="8" x2="458.0" y2="208"/><text x="458.0" y="230" text-anchor="middle">10 s</text><line class="grid" x1="534.0" y1="8" x2="534.0" y2="208"/><text x="534.0" y="230" text-anchor="middle">100 s</text><line class="grid" x1="610.0" y1="8" x2="610.0" y2="208"/><text x="610.0" y="230" text-anchor="middle">1,000 s</text><line class="grid" x1="230" y1="33.0" x2="251.5" y2="33.0" style="stroke:var(--rule)"/><text class="lbl" x="216" y="38.0" text-anchor="end">Greedy heuristic</text><circle class="dot" cx="251.5" cy="33.0" r="7"/><text x="265.5" y="38.0" text-anchor="start">19 ms</text><rect class="hit" tabindex="0" x="0" y="8.0" width="640" height="50" data-tip="Greedy heuristic: 19 ms, total cost 669,022"/><line class="grid" x1="230" y1="83.0" x2="491.1" y2="83.0" style="stroke:var(--rule)"/><text class="lbl" x="216" y="88.0" text-anchor="end">GLOP (linear program)</text><circle class="dot" cx="491.1" cy="83.0" r="7"/><text x="505.1" y="88.0" text-anchor="start">27.3 s</text><rect class="hit" tabindex="0" x="0" y="58.0" width="640" height="50" data-tip="GLOP (linear program): 27.3 s, total cost 662,354"/><line class="grid" x1="230" y1="133.0" x2="497.8" y2="133.0" style="stroke:var(--rule)"/><text class="lbl" x="216" y="138.0" text-anchor="end">CP-SAT</text><circle class="dot" cx="497.8" cy="133.0" r="7"/><text x="511.8" y="138.0" text-anchor="start">33.4 s</text><rect class="hit" tabindex="0" x="0" y="108.0" width="640" height="50" data-tip="CP-SAT: 33.4 s, total cost 662,354"/><line class="grid" x1="230" y1="183.0" x2="555.0" y2="183.0" style="stroke:var(--rule)"/><text class="lbl" x="216" y="188.0" text-anchor="end">SCIP (integer program)</text><circle class="dot" cx="555.0" cy="183.0" r="7"/><text x="541.0" y="188.0" text-anchor="end">188.7 s</text><rect class="hit" tabindex="0" x="0" y="158.0" width="640" height="50" data-tip="SCIP (integer program): 188.7 s, total cost 662,354"/></svg></div>
+<figcaption>Time to solve the same 25-million-variable instance, on a log scale.</figcaption></figure>
+<div class="tablewrap"><table class="data"><thead><tr><th>Method</th><th class="n">Total cost</th><th class="n">Above optimal</th><th class="n">Time</th></tr></thead><tbody><tr><td>Greedy heuristic</td><td class="n">669,022</td><td class="n">1.0%</td><td class="n">19 ms</td></tr><tr><td>GLOP (linear program)</td><td class="n">662,354</td><td class="n">optimal</td><td class="n">27.3 s</td></tr><tr><td>CP-SAT</td><td class="n">662,354</td><td class="n">optimal</td><td class="n">33.4 s</td></tr><tr><td>SCIP (integer program)</td><td class="n">662,354</td><td class="n">optimal</td><td class="n">188.7 s</td></tr></tbody></table></div>
+<p>All three exact methods found the same optimal cost, 662,354. CP-SAT was about 5.7 times faster than SCIP, and the plain linear program was faster still. The greedy heuristic met every outlet's demand at a cost 1.0% above optimal, in 19 milliseconds instead of minutes.</p></section><section id="why" aria-labelledby="why-h"><h2 id="why-h">Why the linear program came out whole</h2>
+<p>The linear program was allowed to ship fractions, yet every shipment came out a whole number and the cost matched the integer optimum exactly. That isn't luck. A transportation problem's constraint matrix is totally unimodular, so when supplies and demands are whole numbers, the linear program's optimal corner point is whole too.</p>
+<p>The assignment tested this by scaling every supply by 0.9999. The linear program then returned 28 fractional shipments and a cost of exactly 0.9999 × 662,354 = 662,287.76. Remove the scaling and the fractions disappear. So for this problem you can skip integer programming entirely: the linear program solved it about 7 times faster than SCIP.</p></section><section id="when" aria-labelledby="when-h"><h2 id="when-h">What I'd use when</h2>
+<ul>
+<li><strong>Greedy</strong> when decisions have to be made over and over in real time, the problem is too big for an exact solver, or being within about 1% is good enough. It also makes a good starting solution for an exact solver.</li>
+<li><strong>A linear program</strong> whenever the structure guarantees whole-number answers, as it does here.</li>
+<li><strong>An integer program</strong> once you add something that breaks that structure, like a fixed cost to open a route or a minimum shipment size.</li>
+<li><strong>At any scale</strong>, drop suppliers and outlets with zero supply or demand before building the model. Only 15 of each were active in this data, which shrinks 25 million variables to 225.</li>
+</ul>
+<p class="note">Help I had, documented for the course: Claude helped me write starting code for the integer program and showed me how to switch to continuous variables for the linear program.</p></section></div>
+</div>
+</main>
+<footer class="foot" id="contact">
+  <div class="wrap">
+    <div>
+      <h2>Get in touch</h2>
+      <p>I'm looking for a part-time engineering internship in Northwest Arkansas for this school year, and for an internship in Germany starting February 2028. Operations, supply chain, manufacturing and consulting all interest me.</p>
+      <ul class="contact">
+        <li><a href="mailto:rja008@uark.edu">rja008@uark.edu</a></li>
+        <li><a href="https://www.linkedin.com/in/ryan-allen-693738390">LinkedIn</a></li>
+        <li><a href="https://github.com/RyanAllen2004">GitHub</a></li>
+        <li><a href="../assets/Ryan_Allen_Resume.pdf">Résumé (PDF)</a></li>
+      </ul>
+    </div>
+    <div class="fine">
+      <p>I built this site with help from Claude, an AI assistant, and document that use for my courses. The project write-ups come from my coursework and project files.</p>
+      <p>Map data: University of Arkansas campus map and © OpenStreetMap contributors. Student work, not affiliated with the University of Arkansas.</p>
+      <p>Updated October 2026.</p>
+    </div>
+  </div>
+</footer>
+<script src="../assets/site.js" defer></script>
+</body>
+</html>
