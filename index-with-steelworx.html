@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ryan Allen | Industrial Engineering Portfolio</title>
+<meta name="description" content="Industrial engineering and operations analytics student at the University of Arkansas: optimization, machine learning and decision tools. Class of 2028, heading to Germany in 2027–28.">
+<link rel="canonical" href="https://ryanallen2004.github.io/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Ryan Allen | Industrial Engineering Portfolio">
+<meta property="og:description" content="Industrial engineering and operations analytics student at the University of Arkansas: optimization, machine learning and decision tools. Class of 2028, heading to Germany in 2027–28.">
+<meta property="og:url" content="https://ryanallen2004.github.io/">
+<meta property="og:image" content="https://ryanallen2004.github.io/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#F5F7F9">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="./"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#13233A"/><g stroke="#F5F7F9" stroke-width="1.6" stroke-linecap="round"><path d="M16 17 8 9M16 17l9-5M16 17l-3 9M16 17l8 7"/></g><g fill="#F5F7F9"><circle cx="8" cy="9" r="2.3"/><circle cx="25" cy="12" r="2.3"/><circle cx="13" cy="26" r="2.3"/><circle cx="24" cy="24" r="2.3"/></g><circle cx="16" cy="17" r="4" fill="#FF7A33"/></svg>Ryan Allen</a>
+    <nav aria-label="Main"><ul><li class=""><a href="#projects">Projects</a></li><li class="opt"><a href="#experience">Experience</a></li><li class="opt"><a href="#germany">Germany</a></li><li class=""><a href="#contact">Contact</a></li><li class="cta"><a href="assets/Ryan_Allen_Resume.pdf">Résumé</a></li></ul></nav>
+  </div>
+</header>
+<main id="main">
+
+<section class="hero" aria-labelledby="name">
+  <div class="wrap">
+    <div class="intro">
+      <p class="eyebrow"><span>B.S. Industrial Engineering &amp; Operations Analytics<i aria-hidden="true">·</i></span> <span>B.A. German<i aria-hidden="true">·</i></span> <span>University of Arkansas<i aria-hidden="true">·</i></span> <span>Class of 2028</span></p>
+      <h1 id="name"><span>Ryan</span><span>Allen</span></h1>
+      <p class="lead">I like problems where the answer is a decision: where people should park, how to spend a fixed budget, when a fast heuristic is good enough.</p>
+      <p class="sub">Right now I'm looking for a part-time engineering internship in Northwest Arkansas, before a planned year in Germany in 2027–28.</p>
+      <div class="actions">
+        <a class="btn primary" href="assets/Ryan_Allen_Resume.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="m7 10 5 5 5-5"/><path d="M5 20h14"/></svg>Download résumé</a>
+        <a class="btn" href="mailto:rja008@uark.edu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg>Email me</a>
+        <a class="btn" href="https://www.linkedin.com/in/ryan-allen-693738390"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10.5" r="2.2"/><path d="M5.8 16.4c.6-1.7 1.7-2.5 3.2-2.5s2.6.8 3.2 2.5"/><path d="M14.5 9.5h4M14.5 13h4"/></svg>LinkedIn</a>
+      </div>
+    </div>
+    <figure class="solver panel" id="solver" data-src="assets/hero-data.json" data-view="1000 230 2200 2150">
+      <div class="solver-head"><h2 class="solver-title">Which parking lots should campus open?</h2><p class="solver-tag">Live demo · p-median model</p></div>
+      <div class="solver-frame"></div>
+      <div class="solver-controls">
+        <button type="button" class="play" id="solver-play" aria-label="Play: open one lot at a time"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l10.5-6.5z" fill="currentColor"/><path class="i-pause" d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z" fill="currentColor"/></svg></button>
+        <div class="kpick"><span id="k-label">Lots to open</span><div class="seg" role="radiogroup" aria-labelledby="k-label"><button type="button" role="radio" data-k="1" aria-checked="false" tabindex="-1">1</button><button type="button" role="radio" data-k="2" aria-checked="false" tabindex="-1">2</button><button type="button" role="radio" data-k="3" aria-checked="true" tabindex="0">3</button><button type="button" role="radio" data-k="4" aria-checked="false" tabindex="-1">4</button><button type="button" role="radio" data-k="5" aria-checked="false" tabindex="-1">5</button><button type="button" role="radio" data-k="6" aria-checked="false" tabindex="-1">6</button></div></div>
+        <button type="button" class="btn small pick" id="solver-pick">Pick your own lots</button>
+      </div>
+      <div class="solver-result" aria-live="polite">
+        <p class="avgwalk"><strong id="solver-walk">&nbsp;</strong><span>average walk</span></p>
+        <p class="say" id="solver-say"></p>
+      </div>
+      <div class="curve" id="solver-curve"></div>
+      <ul class="legend solver-key" aria-label="Map key">
+        <li><span class="sw dot"></span>Class building</li>
+        <li><span class="sw"></span>Lot that could open</li>
+        <li><span class="sw open"></span>Opened lot</li>
+        <li><span class="sw walk"></span>Walk to the nearest opened lot</li>
+      </ul>
+      <figcaption>Pick a number and your browser finds the lots that make the average straight-line walk to the buildings where classes meet as short as possible. It solves exactly, with branch and bound. Or pick your own lots and see how close you get. The model in my <a href="parking-model/">operations research project</a> adds capacity, permit rules and traffic.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="section" id="projects" aria-labelledby="projects-h">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 id="projects-h">Projects</h2>
+      <p>Two team projects from this semester, then two course assignments. Each page says what I did myself and what help I had.</p>
+    </div>
+    <ul class="work">
+      <li>
+        <a class="thumb" href="hillpark/" tabindex="-1" aria-hidden="true"><img src="assets/img/hillpark-plan.webp" alt="" width="1360" height="900" loading="lazy" decoding="async"></a>
+        <div>
+          <h3><a href="hillpark/">HillPark</a></h3>
+          <p class="meta">INEG 22203 Computing Methods II, fall 2026. Team of three.</p>
+          <p>A web app that tells a University of Arkansas student where to park for their class schedule. It ranks the lots your permit allows by walking time, driving time and traffic, checks whether a park-and-ride bus would be faster, and uses an integer program to pick the best lots for your whole week. Its score is minutes of walking and traffic delay, plus a penalty for lots likely to be full.</p>
+          <ul class="stats">
+            <li><b>16%</b><span>lower week score with two lots instead of one (178 to 149)</span></li>
+            <li><b>35</b><span>automated tests, including brute-force checks of the week plan</span></li>
+            <li><b>0.51</b><span>R² of the traffic forecast on unseen days, vs 0.32 for averages</span></li>
+          </ul>
+          <a class="more" href="hillpark/">Read about HillPark <span aria-hidden="true">→</span></a>
+        </div>
+      </li>
+      <li>
+        <a class="thumb mapbox" href="parking-model/" tabindex="-1" aria-hidden="true" data-lotmap="assets/hero-data.json" data-view="1150 950 1500 940" data-thumb></a>
+        <div>
+          <h3><a href="parking-model/">Campus parking permit model</a></h3>
+          <p class="meta">INEG 26103 Introduction to Operations Research, fall 2026. Team of two.</p>
+          <p>The university sells more car permits than it has spaces. We're building a mixed-integer model that decides which permit each campus lot should serve, to shorten walks without sending everyone down the same road. Approved at the October milestone; results come in December.</p>
+          <ul class="stats">
+            <li><b>1.44</b><span>car permits sold for every parking space</span></li>
+            <li><b>110</b><span>lots and garages in our dataset, with permit rules and sizes</span></li>
+            <li><b>87.4%</b><span>unsatisfied with parking in a 2024 campus study</span></li>
+          </ul>
+          <a class="more" href="parking-model/">Read about the permit model <span aria-hidden="true">→</span></a>
+        </div>
+      </li>
+    </ul>
+    <h3 class="subhead">Course assignments</h3>
+    <ul class="work-small">
+      <li>
+        <a class="thumb" href="race-car/" tabindex="-1" aria-hidden="true"><svg class="chart" viewBox="0 0 480 300" aria-hidden="true" focusable="false"><line class="axis" x1="46" y1="236" x2="434" y2="236"/><path class="bar muted" d="M86.7,236 V69.6 Q86.7,65.6 90.7,65.6 H144.0 Q148.0,65.6 148.0,69.6 V236 Z"/><text x="117.3" y="55.6" text-anchor="middle" style="font-size:20px">35.4</text><text x="117.3" y="266" text-anchor="middle" style="font-size:19px">Forest</text><path class="bar" d="M209.3,236 V95.8 Q209.3,91.8 213.3,91.8 H266.7 Q270.7,91.8 270.7,95.8 V236 Z"/><text class="lbl" x="240.0" y="81.8" text-anchor="middle" style="font-size:20px">30.0</text><text class="lbl" x="240.0" y="266" text-anchor="middle" style="font-size:19px">OLS (used)</text><path class="bar muted" d="M332.0,236 V100.1 Q332.0,96.1 336.0,96.1 H389.3 Q393.3,96.1 393.3,100.1 V236 Z"/><text x="362.7" y="86.1" text-anchor="middle" style="font-size:20px">29.1</text><text x="362.7" y="266" text-anchor="middle" style="font-size:19px">Boosting</text><text x="46" y="26" style="font-size:18px">Test error (MSE), lower is better</text></svg></a>
+        <h4><a href="race-car/">Race-car performance model</a></h4>
+        <p class="meta">INEG 22203, Assignment 4. Individual.</p>
+        <p>I trained three machine-learning models on 60,000 simulated races, then used the one I could explain to spend a fixed 1,000-point upgrade budget on a car and driver.</p>
+        <ul class="stats">
+          <li><b>70.5</b><span>points per race for my car in the season simulation</span></li>
+          <li><b>47.5</b><span>average for the racers in the data</span></li>
+        </ul>
+        <a class="more" href="race-car/">Read about the race-car model <span aria-hidden="true">→</span></a>
+      </li>
+      <li>
+        <a class="thumb" href="transportation/" tabindex="-1" aria-hidden="true"><svg class="chart" viewBox="0 0 480 300" aria-hidden="true" focusable="false"><line class="grid" x1="118.0" y1="38" x2="118.0" y2="254"/><text x="118.0" y="278" text-anchor="middle" style="font-size:17px">0.01 s</text><line class="grid" x1="250.8" y1="38" x2="250.8" y2="254"/><text x="250.8" y="278" text-anchor="middle" style="font-size:17px">1 s</text><line class="grid" x1="383.6" y1="38" x2="383.6" y2="254"/><text x="383.6" y="278" text-anchor="middle" style="font-size:17px">100 s</text><line x1="118" y1="71.5" x2="136.8" y2="71.5" style="stroke:var(--rule);stroke-width:1.5"/><text class="lbl" x="106" y="77.5" text-anchor="end" style="font-size:19px">Greedy</text><circle class="dot" cx="136.8" cy="71.5" r="8"/><line x1="118" y1="122.5" x2="346.2" y2="122.5" style="stroke:var(--rule);stroke-width:1.5"/><text class="lbl" x="106" y="128.5" text-anchor="end" style="font-size:19px">LP</text><circle class="dot" cx="346.2" cy="122.5" r="8"/><line x1="118" y1="173.5" x2="351.9" y2="173.5" style="stroke:var(--rule);stroke-width:1.5"/><text class="lbl" x="106" y="179.5" text-anchor="end" style="font-size:19px">CP-SAT</text><circle class="dot" cx="351.9" cy="173.5" r="8"/><line x1="118" y1="224.5" x2="401.9" y2="224.5" style="stroke:var(--rule);stroke-width:1.5"/><text class="lbl" x="106" y="230.5" text-anchor="end" style="font-size:19px">SCIP</text><circle class="dot" cx="401.9" cy="224.5" r="8"/><text x="106" y="24" style="font-size:18px">Time to solve, log scale</text></svg></a>
+        <h4><a href="transportation/">Four ways to solve one shipping problem</a></h4>
+        <p class="meta">INEG 22203, Assignment 5. Individual.</p>
+        <p>One transportation problem solved as an integer program, a constraint program, a linear program and with a greedy heuristic I wrote. Only 15 suppliers and 15 outlets had anything to ship, so trimming the empty ones would cut the model from 25 million variables to 225.</p>
+        <ul class="stats">
+          <li><b>1.0%</b><span>above optimal for my greedy heuristic, in 19 ms</span></li>
+          <li><b>7×</b><span>faster as a linear program than with SCIP, same optimum</span></li>
+        </ul>
+        <a class="more" href="transportation/">Read about the solver comparison <span aria-hidden="true">→</span></a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section class="section shade" id="experience" aria-labelledby="experience-h">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 id="experience-h">Experience</h2>
+      <p>Leadership, customer-facing work, and a business I ran in high school.</p>
+    </div>
+    <ul class="jobs">
+      <li>
+        <div><h3>Design Lead</h3><p class="org">Engineering World Health, University of Arkansas chapter</p><p class="when">Nov 2023 – present</p></div>
+        <ul>
+          <li>Lead a student design team building a prototype all-terrain vehicle to deliver medical supplies after disasters.</li>
+          <li>Coordinate an interdisciplinary team to balance design trade-offs under strict weight, size and budget limits.</li>
+        </ul>
+      </li>
+      <li>
+        <div><h3>Quality Control Intern</h3><p class="org">Steelworx Industrial Group, Fayetteville, AR</p><p class="when">Oct 2026 – present</p></div>
+        <ul>
+          <li>Quality control internship in steel fabrication: part-time role held alongside full-time coursework.</li>
+        </ul>
+      </li>
+    </ul>
+    <h3 class="subhead">Other work</h3>
+    <ul class="jobs brief">
+      <li><div><h4>Staff member</h4><p class="org">Ozark Iron Gym <span class="when">· Mar 2024 – present</span></p></div><p>First point of contact for a 24/7 gym with more than 900 members: accounts, billing, tours and new memberships.</p></li>
+      <li><div><h4>Security staff and barback</h4><p class="org">Dickson Street Pub <span class="when">· Jul 2025 – Jul 2026</span></p></div><p>Entry, ID checks and de-escalation for game-day and weekend crowds of 125 or more.</p></li>
+      <li><div><h4>Owner and manager</h4><p class="org">A&amp;A Lawncare n' More <span class="when">· Summers 2020 – 2023</span></p></div><p>Built and ran a lawn care and handyman business with more than 25 recurring clients, and hired and trained an employee.</p></li>
+    </ul>
+    <p class="note" style="margin-top:24px">Also a member of the Institute of Industrial and Systems Engineers (IISE), and a volunteer at First Hand Thrift Store in Bentonville since January 2024.</p>
+  </div>
+</section>
+
+<section class="section" id="skills" aria-labelledby="skills-h">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 id="skills-h">Skills and coursework</h2>
+      <p>From my courses and the projects above.</p>
+    </div>
+    <div class="skillrows">
+      <div><h3>Optimization</h3><ul class="tags">
+        <li>Linear programming</li><li>Integer and mixed-integer programming</li><li>Facility location (p-median)</li><li>Transportation models</li><li>AMPL with CPLEX</li><li>Google OR-Tools: SCIP, CP-SAT, GLOP</li></ul></div>
+      <div><h3>Data and machine learning</h3><ul class="tags">
+        <li>Random forest</li><li>Gradient boosting</li><li>Linear regression</li><li>Feature selection</li><li>Hyperparameter tuning</li><li>Time-ordered train and test splits</li><li>Tablesaw and Smile in Java</li><li>R</li><li>Python</li></ul></div>
+      <div><h3>Software</h3><ul class="tags">
+        <li>Java 21</li><li>Vaadin web apps</li><li>Git and GitHub</li><li>Excel: pivot tables, Solver</li><li>SolidWorks</li></ul></div>
+      <div><h3>Languages</h3><ul class="tags">
+        <li>English, native</li><li>German, conversational (BA in progress)</li></ul></div>
+    </div>
+    <ul class="courses" aria-label="Relevant courses">
+      <li><span class="c">Introduction to Operations Research<small>INEG 26103</small></span><span>Linear and integer programming, standard form, modeling in AMPL</span></li>
+      <li><span class="c">Computing Methods for Industrial Engineers II<small>INEG 22203</small></span><span>Object-oriented Java, Tablesaw data analysis, Smile machine learning, OR-Tools optimization, Vaadin web interfaces</span></li>
+      <li><span class="c">Production Planning and Control<small>INEG 35503</small></span><span>Aggregate planning, EOQ and quantity discounts, the newsvendor problem, (Q, R) inventory systems, master production scheduling</span></li>
+      <li><span class="c">Engineering Economic Analysis<small>INEG 24103</small></span><span>Time value of money, loans and variable interest rates, cost of capital</span></li>
+      <li><span class="c">Linear Algebra<small>MATH 30803</small></span><span>Matrices, linear systems and vector spaces, the math underneath linear programming</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="section shade" id="germany" aria-labelledby="germany-h">
+  <div class="wrap de">
+    <div>
+      <h2 id="germany-h">Germany, 2027–28</h2>
+      <p style="margin-top:16px">I'm earning a BA in German alongside my engineering degree, and I'm planning to spend 2027–28 in Germany.</p>
+      <ul class="plan">
+        <li><span class="when">Fall 2027</span><span>Exchange semester at the Technische Universität Darmstadt (TU Darmstadt)</span></li>
+        <li><span class="when">Spring 2028</span><span>Internship in Germany from February 2028. I'll apply in summer 2027 and I'm open to operations, supply chain, manufacturing and consulting roles anywhere in the country.</span></li>
+        <li><span class="when">May 2028</span><span>Graduate from the University of Arkansas</span></li>
+      </ul>
+    </div>
+    <div class="deutsch" lang="de">
+      <h3>Auf Deutsch</h3>
+      <p>Ich studiere Industrial Engineering &amp; Operations Analytics (B.S.) und Deutsch (B.A.) an der University of Arkansas. Im Wintersemester 2027/28 möchte ich an der TU Darmstadt studieren. Ich suche ein Praktikum in Deutschland mit Beginn im Februar 2028, gern in den Bereichen Supply Chain, Produktion oder Beratung.</p>
+      <p>Ich freue mich über Ihre Nachricht.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+<footer class="foot" id="contact">
+  <div class="wrap">
+    <div>
+      <h2>Get in touch</h2>
+      <p>I'm looking for a part-time engineering internship in Northwest Arkansas for this school year, and for an internship in Germany starting February 2028. Operations, supply chain, manufacturing and consulting all interest me.</p>
+      <ul class="contact">
+        <li><a href="mailto:rja008@uark.edu">rja008@uark.edu</a></li>
+        <li><a href="https://www.linkedin.com/in/ryan-allen-693738390">LinkedIn</a></li>
+        <li><a href="assets/Ryan_Allen_Resume.pdf">Résumé (PDF)</a></li>
+      </ul>
+    </div>
+    <div class="fine">
+      <p>I built this site with help from Claude, an AI assistant. The project write-ups come from my coursework and project files.</p>
+      <p>Map data: University of Arkansas campus map and © OpenStreetMap contributors. Student work, not affiliated with the University of Arkansas.</p>
+      <p>Updated October 2026.</p>
+    </div>
+  </div>
+</footer>
+<script src="assets/site.js" defer></script>
+</body>
+</html>
